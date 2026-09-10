@@ -70,8 +70,8 @@ public class SolicitacaoService {
     }
 
     @Transactional
-    public void moverStatus(Long id, MoverStatusRequest req, Usuario responsavel) {
-        Solicitacao s = solicitacaoRepository.findById(String.valueOf(id))
+    public void moverStatus(String id, MoverStatusRequest req, Usuario responsavel) {
+        Solicitacao s = solicitacaoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Solicitação não encontrada: " + id));
 
         if (!s.getStatus().podeMoverPara(req.novoStatus()))
@@ -119,20 +119,20 @@ public class SolicitacaoService {
         return solicitacaoRepository.findAllByStatusOrderByDataCadastroAsc(status);
     }
 
-    public List<Solicitacao> listarMinhas(Long usuarioId) {
-        return solicitacaoRepository.findAllByUsuarioIdOrderByDataCadastroDesc(String.valueOf(usuarioId));
+    public List<Solicitacao> listarMinhas(String usuarioId) {
+        return solicitacaoRepository.findAllByUsuarioIdOrderByDataCadastroDesc(usuarioId);
     }
 
     public List<Solicitacao> listarAnonimas() {
         return solicitacaoRepository.findAllByUsuarioIdIsNullOrderByDataCadastroDesc();
     }
 
-    public List<Movimentacao> buscarHistorico(Long solicitacaoId) {
-        return movimentacaoRepository.findAllBySolicitacaoIdOrderByDataCadastroAsc(String.valueOf(solicitacaoId));
+    public List<Movimentacao> buscarHistorico(String solicitacaoId) {
+        return movimentacaoRepository.findAllBySolicitacaoIdOrderByDataCadastroAsc(solicitacaoId);
     }
 
-    public List<LogAcao> buscarLogs(Long solicitacaoId) {
-        return logRepository.findAllByEntidadeAndEntidadeIdOrderByDataCadastroAsc("solicitacao", String.valueOf(solicitacaoId));
+    public List<LogAcao> buscarLogs(String solicitacaoId) {
+        return logRepository.findAllByEntidadeAndEntidadeIdOrderByDataCadastroAsc("solicitacao", solicitacaoId);
     }
 
     private void validarDescricao(String descricao, boolean anonimo) {
