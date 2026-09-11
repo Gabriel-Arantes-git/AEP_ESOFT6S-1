@@ -20,6 +20,14 @@ public class UsuarioService extends DefaultCrudService<UsuarioRepository, Usuari
         return usuarioRepository;
     }
 
+    @Override
+    public void deletar(String id) {
+        usuarioRepository.findById(id).ifPresent(usuario -> {
+            usuario.setAtivo(false);
+            usuarioRepository.save(usuario);
+        });
+    }
+
     public Usuario cadastrar(UsuarioRequest request) {
         if (usuarioRepository.findByEmail(request.email()).isPresent())
             throw new IllegalArgumentException("E-mail já cadastrado.");
