@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -84,8 +83,8 @@ public class SolicitacaoService {
         StatusSolicitacao anterior = s.getStatus();
 
         if (req.novoStatus() == StatusSolicitacao.TRIAGEM) {
-            Objects.requireNonNull(req.prioridade(), "Prioridade obrigatória na triagem");
-            Objects.requireNonNull(req.departamentoId(), "Departamento obrigatório na triagem");
+            if (req.prioridade() == null) throw new IllegalArgumentException("Prioridade obrigatória na triagem");
+            if (req.departamentoId() == null) throw new IllegalArgumentException("Departamento obrigatório na triagem");
             s.setPrioridade(req.prioridade());
             s.setDepartamento(DepartamentoResumo.from(departamentoRepository.findById(req.departamentoId())
                     .orElseThrow(() -> new IllegalArgumentException("Departamento não encontrado: " + req.departamentoId()))));
