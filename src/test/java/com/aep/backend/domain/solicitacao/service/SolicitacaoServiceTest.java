@@ -35,6 +35,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,6 +99,37 @@ class SolicitacaoServiceTest {
         assertTrue(resultado.getProtocolo().startsWith("DEN-" + Year.now().getValue() + "-"));
         verify(solicitacaoRepository).save(any(Solicitacao.class));
         verify(movimentacaoRepository).save(any(Movimentacao.class));
+        verify(logRepository).save(any(LogAcao.class));
+    }
+
+    @Test
+    @DisplayName("Deve criar solicitação anônima quando a descrição for válida")
+    void deveCriarSolicitacaoAnonimaQuandoDescricaoForValida() {
+        Categoria categoria = criarCategoria("cat-1");
+        SolicitacaoRequest request = new SolicitacaoRequest(
+                "cat-1",
+                "Descrição da denúncia anônima com mais de cinquenta caracteres para ser válida.",
+                "Centro",
+                "Rua das Flores",
+                "Próximo ao mercado",
+                true,
+                "Ana Souza",
+                "ana@email.com",
+                -23.56,
+                -46.67,
+                "01000-000"
+        );
+        when(categoriaRepository.findById("cat-1")).thenReturn(Optional.of(categoria));
+        when(solicitacaoRepository.countByProtocoloStartingWith("DEN-" + Year.now().getValue() + "-")).thenReturn(0L);
+        when(solicitacaoRepository.save(any(Solicitacao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(movimentacaoRepository.save(any(Movimentacao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(logRepository.save(any(LogAcao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Solicitacao resultado = solicitacaoService.criar(request, null);
+
+        assertNotNull(resultado);
+        assertTrue(resultado.isAnonimo());
+        assertNull(resultado.getUsuarioId());
         verify(logRepository).save(any(LogAcao.class));
     }
 
@@ -300,8 +332,8 @@ class SolicitacaoServiceTest {
         );
         when(solicitacaoRepository.findById("sol-5")).thenReturn(Optional.of(solicitacao));
 
-        NullPointerException excecao = assertThrows(
-                NullPointerException.class,
+        IllegalArgumentException excecao = assertThrows(
+                IllegalArgumentException.class,
                 () -> solicitacaoService.moverStatus("sol-5", request, responsavel)
         );
 
@@ -323,8 +355,8 @@ class SolicitacaoServiceTest {
         );
         when(solicitacaoRepository.findById("sol-6")).thenReturn(Optional.of(solicitacao));
 
-        NullPointerException excecao = assertThrows(
-                NullPointerException.class,
+        IllegalArgumentException excecao = assertThrows(
+                IllegalArgumentException.class,
                 () -> solicitacaoService.moverStatus("sol-6", request, responsavel)
         );
 

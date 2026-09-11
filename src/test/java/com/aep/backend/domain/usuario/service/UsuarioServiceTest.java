@@ -80,4 +80,30 @@ class UsuarioServiceTest {
         verify(passwordEncoder, never()).encode(any());
         verify(usuarioRepository, never()).save(any(Usuario.class));
     }
+
+    @Test
+    @DisplayName("Deve inativar o usuário em vez de apagá-lo ao deletar")
+    void deveInativarUsuarioAoDeletar() {
+        Usuario usuario = new Usuario();
+        usuario.setId("user-1");
+        usuario.setAtivo(true);
+        when(usuarioRepository.findById("user-1")).thenReturn(Optional.of(usuario));
+
+        usuarioService.deletar("user-1");
+
+        assertEquals(false, usuario.isAtivo());
+        verify(usuarioRepository).save(usuario);
+        verify(usuarioRepository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("Não deve fazer nada ao deletar usuário inexistente")
+    void naoDeveFazerNadaAoDeletarUsuarioInexistente() {
+        when(usuarioRepository.findById("user-inexistente")).thenReturn(Optional.empty());
+
+        usuarioService.deletar("user-inexistente");
+
+        verify(usuarioRepository, never()).save(any(Usuario.class));
+        verify(usuarioRepository, never()).deleteById(any());
+    }
 }
