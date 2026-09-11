@@ -3,17 +3,16 @@ package com.aep.backend.domain.abstraction;
 import com.aep.backend.domain.categoria.controller.CategoriaController;
 import com.aep.backend.domain.categoria.entity.Categoria;
 import com.aep.backend.domain.categoria.service.CategoriaService;
-import com.aep.backend.infra.exception.GlobalExceptionHandler;
-import org.junit.jupiter.api.BeforeEach;
+import com.aep.backend.infra.security.JwtTokenProvider;
+import com.aep.backend.infra.security.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,23 +24,23 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(CategoriaController.class)
 class DefaultCrudControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockitoBean
     private CategoriaService categoriaService;
 
-    @InjectMocks
-    private CategoriaController categoriaController;
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
 
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(categoriaController)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-    }
+    @MockitoBean
+    private UserDetailsServiceImpl userDetailsServiceImpl;
+
+    @MockitoBean(name = "mongoMappingContext", enforceOverride = false)
+    private MongoMappingContext mongoMappingContext;
 
     @Test
     @DisplayName("Deve retornar status 200 com a lista ao listar todos os registros")
