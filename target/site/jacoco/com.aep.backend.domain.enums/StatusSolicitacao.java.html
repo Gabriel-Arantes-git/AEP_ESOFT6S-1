@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatusSolicitacao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">com.aep.backend.domain.enums</a> &gt; <span class="el_source">StatusSolicitacao.java</span></div><h1>StatusSolicitacao.java</h1><pre class="source lang-java linenums">package com.aep.backend.domain.enums;
+
+<span class="nc" id="L3">public enum StatusSolicitacao {</span>
+<span class="nc" id="L4">    ABERTO, TRIAGEM, EM_EXECUCAO, RESOLVIDO, ENCERRADO;</span>
+
+    public boolean podeMoverPara(StatusSolicitacao proximo) {
+<span class="nc bnc" id="L7" title="All 5 branches missed.">        return switch (this) {</span>
+<span class="nc bnc" id="L8" title="All 2 branches missed.">            case ABERTO      -&gt; proximo == TRIAGEM;</span>
+<span class="nc bnc" id="L9" title="All 4 branches missed.">            case TRIAGEM     -&gt; proximo == EM_EXECUCAO || proximo == ENCERRADO;</span>
+<span class="nc bnc" id="L10" title="All 2 branches missed.">            case EM_EXECUCAO -&gt; proximo == RESOLVIDO;</span>
+<span class="nc bnc" id="L11" title="All 2 branches missed.">            case RESOLVIDO   -&gt; proximo == ENCERRADO;</span>
+<span class="nc" id="L12">            case ENCERRADO   -&gt; false;</span>
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

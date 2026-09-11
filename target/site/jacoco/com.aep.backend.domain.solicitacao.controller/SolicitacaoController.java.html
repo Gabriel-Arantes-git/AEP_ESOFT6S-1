@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SolicitacaoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">com.aep.backend.domain.solicitacao.controller</a> &gt; <span class="el_source">SolicitacaoController.java</span></div><h1>SolicitacaoController.java</h1><pre class="source lang-java linenums">package com.aep.backend.domain.solicitacao.controller;
+
+import com.aep.backend.domain.enums.StatusSolicitacao;
+import com.aep.backend.domain.solicitacao.dto.*;
+import com.aep.backend.domain.solicitacao.service.SolicitacaoService;
+import com.aep.backend.domain.usuario.entity.Usuario;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/solicitacoes&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Solicitações&quot;, description = &quot;Abertura, acompanhamento e tramitação de denúncias&quot;)
+public class SolicitacaoController {
+
+    private final SolicitacaoService solicitacaoService;
+
+    @PostMapping
+    @Operation(summary = &quot;Abre uma denúncia identificada&quot;,
+            description = &quot;A denúncia fica vinculada ao usuário autenticado e recebe um protocolo &quot;
+                    + &quot;no formato DEN-&lt;ano&gt;-&lt;sequencial&gt;. O status inicial é ABERTO.&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Denúncia aberta&quot;),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Descrição vazia ou categoria inexistente&quot;, content = @Content)
+    })
+    public ResponseEntity&lt;SolicitacaoResponse&gt; criar(
+            @RequestBody @Valid SolicitacaoRequest req,
+            @AuthenticationPrincipal Usuario usuario) {
+<span class="nc" id="L43">        return ResponseEntity.status(HttpStatus.CREATED)</span>
+<span class="nc" id="L44">                .body(SolicitacaoResponse.from(solicitacaoService.criar(req, usuario)));</span>
+    }
+
+    @PostMapping(&quot;/anonima&quot;)
+    @SecurityRequirements
+    @Operation(summary = &quot;Abre uma denúncia anônima&quot;,
+            description = &quot;Endpoint público: a denúncia não é vinculada a nenhum usuário. &quot;
+                    + &quot;A descrição precisa ter no mínimo 50 caracteres. &quot;
+                    + &quot;O campo anonimo do corpo é ignorado e sempre tratado como true.&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Denúncia anônima aberta&quot;),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Descrição com menos de 50 caracteres ou categoria inexistente&quot;, content = @Content)
+    })
+    public ResponseEntity&lt;SolicitacaoResponse&gt; criarAnonima(@RequestBody @Valid SolicitacaoRequest req) {
+<span class="nc" id="L58">        SolicitacaoRequest reqAnonima = new SolicitacaoRequest(</span>
+<span class="nc" id="L59">                req.categoriaId(), req.descricao(), req.bairro(),</span>
+<span class="nc" id="L60">                req.logradouro(), req.referencia(), true,</span>
+<span class="nc" id="L61">                req.nomeContato(), req.emailContato(),</span>
+<span class="nc" id="L62">                req.latitude(), req.longitude(), req.cep()</span>
+        );
+<span class="nc" id="L64">        return ResponseEntity.status(HttpStatus.CREATED)</span>
+<span class="nc" id="L65">                .body(SolicitacaoResponse.from(solicitacaoService.criar(reqAnonima, null)));</span>
+    }
+
+    @GetMapping
+    @PreAuthorize(&quot;hasAnyRole('ATENDENTE', 'GESTOR')&quot;)
+    @Operation(summary = &quot;Lista as denúncias, opcionalmente filtrando por status&quot;,
+            description = &quot;Requer perfil ATENDENTE ou GESTOR. Sem filtro, retorna da mais recente para a mais antiga.&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Denúncias retornadas&quot;),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Perfil sem permissão&quot;, content = @Content)
+    })
+    public ResponseEntity&lt;List&lt;SolicitacaoResponse&gt;&gt; listar(
+            @Parameter(description = &quot;Filtra por status do fluxo de atendimento&quot;)
+            @RequestParam(required = false) StatusSolicitacao status) {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        List&lt;SolicitacaoResponse&gt; lista = status != null</span>
+<span class="nc" id="L80">                ? solicitacaoService.listarPorStatus(status).stream().map(SolicitacaoResponse::from).toList()</span>
+<span class="nc" id="L81">                : solicitacaoService.listarTodas().stream().map(SolicitacaoResponse::from).toList();</span>
+<span class="nc" id="L82">        return ResponseEntity.ok(lista);</span>
+    }
+
+    @GetMapping(&quot;/minhas&quot;)
+    @Operation(summary = &quot;Lista as denúncias abertas pelo usuário autenticado&quot;,
+            description = &quot;Denúncias anônimas não aparecem aqui, pois não guardam vínculo com o autor.&quot;)
+    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Denúncias retornadas&quot;)
+    public ResponseEntity&lt;List&lt;SolicitacaoResponse&gt;&gt; minhas(@AuthenticationPrincipal Usuario usuario) {
+<span class="nc" id="L90">        return ResponseEntity.ok(</span>
+<span class="nc" id="L91">                solicitacaoService.listarMinhas(usuario.getId()).stream().map(SolicitacaoResponse::from).toList());</span>
+    }
+
+    @GetMapping(&quot;/publicas&quot;)
+    @SecurityRequirements
+    @Operation(summary = &quot;Lista as denúncias para consulta pública&quot;)
+    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Denúncias retornadas&quot;)
+    public ResponseEntity&lt;List&lt;SolicitacaoResponse&gt;&gt; publicas() {
+<span class="nc" id="L99">        return ResponseEntity.ok(</span>
+<span class="nc" id="L100">                solicitacaoService.listarTodas().stream().map(SolicitacaoResponse::from).toList());</span>
+    }
+
+    @GetMapping(&quot;/anonimas&quot;)
+    @SecurityRequirements
+    @Operation(summary = &quot;Lista somente as denúncias anônimas&quot;)
+    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Denúncias retornadas&quot;)
+    public ResponseEntity&lt;List&lt;SolicitacaoResponse&gt;&gt; anonimas() {
+<span class="nc" id="L108">        return ResponseEntity.ok(</span>
+<span class="nc" id="L109">                solicitacaoService.listarAnonimas().stream().map(SolicitacaoResponse::from).toList());</span>
+    }
+
+    @GetMapping(&quot;/protocolo/{protocolo}&quot;)
+    @Operation(summary = &quot;Busca uma denúncia pelo número de protocolo&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Denúncia encontrada&quot;),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Protocolo inexistente&quot;, content = @Content)
+    })
+    public ResponseEntity&lt;SolicitacaoResponse&gt; buscarPorProtocolo(
+            @Parameter(description = &quot;Protocolo no formato DEN-&lt;ano&gt;-&lt;sequencial&gt;&quot;, example = &quot;DEN-2026-00001&quot;)
+            @PathVariable String protocolo) {
+<span class="nc" id="L121">        return ResponseEntity.ok(SolicitacaoResponse.from(solicitacaoService.buscarPorProtocolo(protocolo)));</span>
+    }
+
+    @PatchMapping(&quot;/{id}/status&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ATENDENTE', 'GESTOR')&quot;)
+    @Operation(summary = &quot;Move a denúncia para o próximo status&quot;,
+            description = &quot;Requer perfil ATENDENTE ou GESTOR. Transições válidas: ABERTO → TRIAGEM, &quot;
+                    + &quot;TRIAGEM → EM_EXECUCAO ou ENCERRADO, EM_EXECUCAO → RESOLVIDO, RESOLVIDO → ENCERRADO. &quot;
+                    + &quot;Na TRIAGEM os campos prioridade e departamentoId são obrigatórios, e o prazo alvo &quot;
+                    + &quot;é calculado a partir do SLA da prioridade. Somente o GESTOR pode ENCERRAR.&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;204&quot;, description = &quot;Status atualizado&quot;),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Denúncia inexistente ou dados de triagem faltando&quot;, content = @Content),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Perfil sem permissão&quot;, content = @Content),
+            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;Transição de status inválida ou encerramento por perfil não gestor&quot;, content = @Content)
+    })
+    public ResponseEntity&lt;Void&gt; moverStatus(
+            @PathVariable String id,
+            @RequestBody @Valid MoverStatusRequest req,
+            @AuthenticationPrincipal Usuario responsavel) {
+<span class="nc" id="L141">        solicitacaoService.moverStatus(id, req, responsavel);</span>
+<span class="nc" id="L142">        return ResponseEntity.noContent().build();</span>
+    }
+
+    @GetMapping(&quot;/{id}/movimentacoes&quot;)
+    @Operation(summary = &quot;Lista o histórico de movimentações da denúncia&quot;,
+            description = &quot;Cada troca de status gera uma movimentação com responsável e comentário.&quot;)
+    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Histórico retornado&quot;)
+    public ResponseEntity&lt;List&lt;MovimentacaoResponse&gt;&gt; historico(@PathVariable String id) {
+<span class="nc" id="L150">        return ResponseEntity.ok(</span>
+<span class="nc" id="L151">                solicitacaoService.buscarHistorico(id).stream().map(MovimentacaoResponse::from).toList());</span>
+    }
+
+    @GetMapping(&quot;/{id}/logs&quot;)
+    @PreAuthorize(&quot;hasRole('GESTOR')&quot;)
+    @Operation(summary = &quot;Lista a trilha de auditoria da denúncia&quot;,
+            description = &quot;Requer perfil GESTOR.&quot;)
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Logs retornados&quot;),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Perfil sem permissão&quot;, content = @Content)
+    })
+    public ResponseEntity&lt;List&lt;LogAcaoResponse&gt;&gt; logs(@PathVariable String id) {
+<span class="nc" id="L163">        return ResponseEntity.ok(</span>
+<span class="nc" id="L164">                solicitacaoService.buscarLogs(id).stream().map(LogAcaoResponse::from).toList());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

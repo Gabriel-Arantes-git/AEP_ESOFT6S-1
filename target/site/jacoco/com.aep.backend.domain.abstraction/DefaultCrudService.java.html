@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultCrudService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">com.aep.backend.domain.abstraction</a> &gt; <span class="el_source">DefaultCrudService.java</span></div><h1>DefaultCrudService.java</h1><pre class="source lang-java linenums">package com.aep.backend.domain.abstraction;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+
+import java.beans.PropertyDescriptor;
+import java.util.HashSet;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
+
+<span class="nc" id="L14">public abstract class DefaultCrudService&lt;R extends DefaultCrudRepository&lt;E&gt;, E extends DefaultEntity&gt; {</span>
+
+    protected abstract R getRepository();
+
+    public E salvar(E entity) {
+<span class="nc" id="L19">        return getRepository().save(entity);</span>
+    }
+
+    public Optional&lt;E&gt; buscarPorId(String id) {
+<span class="nc" id="L23">        return getRepository().findById(id);</span>
+    }
+
+    public List&lt;E&gt; listarTodos() {
+<span class="nc" id="L27">        return getRepository().findAll();</span>
+    }
+
+    public E atualizar(E entity) {
+<span class="nc" id="L31">        E existente = getRepository().findById(entity.getId())</span>
+<span class="nc" id="L32">                .orElseThrow(() -&gt; new NoSuchElementException(&quot;Registro não encontrado: &quot; + entity.getId()));</span>
+<span class="nc" id="L33">        BeanUtils.copyProperties(entity, existente, nomesDePropriedadesNulas(entity));</span>
+<span class="nc" id="L34">        return getRepository().save(existente);</span>
+    }
+
+    private static String[] nomesDePropriedadesNulas(Object origem) {
+<span class="nc" id="L38">        BeanWrapper wrapper = new BeanWrapperImpl(origem);</span>
+<span class="nc" id="L39">        Set&lt;String&gt; nulas = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        for (PropertyDescriptor pd : wrapper.getPropertyDescriptors()) {</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            if (wrapper.getPropertyValue(pd.getName()) == null) {</span>
+<span class="nc" id="L42">                nulas.add(pd.getName());</span>
+            }
+        }
+<span class="nc" id="L45">        return nulas.toArray(new String[0]);</span>
+    }
+
+    public void deletar(String id) {
+<span class="nc" id="L49">        getRepository().findById(id).ifPresent(e -&gt; {</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            if (e instanceof Ativavel a) {</span>
+<span class="nc" id="L51">                a.setAtivo(false);</span>
+<span class="nc" id="L52">                getRepository().save(e);</span>
+            } else {
+<span class="nc" id="L54">                getRepository().deleteById(id);</span>
+            }
+<span class="nc" id="L56">        });</span>
+<span class="nc" id="L57">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

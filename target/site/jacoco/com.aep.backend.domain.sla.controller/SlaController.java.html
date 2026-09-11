@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SlaController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">backend</a> &gt; <a href="index.source.html" class="el_package">com.aep.backend.domain.sla.controller</a> &gt; <span class="el_source">SlaController.java</span></div><h1>SlaController.java</h1><pre class="source lang-java linenums">package com.aep.backend.domain.sla.controller;
+
+import com.aep.backend.domain.sla.entity.SlaConfig;
+import com.aep.backend.domain.sla.service.SlaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/sla&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;SLA&quot;, description = &quot;Prazos de atendimento por prioridade&quot;)
+public class SlaController {
+
+    private final SlaService slaService;
+
+    @GetMapping
+    @SecurityRequirements
+    @Operation(summary = &quot;Lista os prazos de SLA configurados&quot;,
+            description = &quot;O prazo alvo de uma solicitação é calculado na triagem, &quot;
+                    + &quot;somando as horas da prioridade escolhida à data da triagem.&quot;)
+    @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Configurações retornadas&quot;)
+    public ResponseEntity&lt;List&lt;SlaConfig&gt;&gt; listar() {
+<span class="nc" id="L30">        return ResponseEntity.ok(slaService.listarTodos());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
