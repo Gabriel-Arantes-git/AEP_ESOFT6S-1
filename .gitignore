@@ -1,0 +1,40 @@
+# Build outputs
+/target/
+**/target/
+
+# Maven wrapper download metadata (optional)
+.mvn/wrapper/maven-wrapper.jar
+
+# JaCoCo reports and execution files
+**/jacoco.exec
+**/jacoco*.exec
+**/jacoco.xml
+**/jacoco.csv
+**/jacoco-report/
+**/site/jacoco/
+
+# IDE files
+/.idea/
+/.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Spring Boot generated files
+*.pid
+
+# Compiled Java classes
+*.class
+
+# Local env/config
+.env
+.env.*
