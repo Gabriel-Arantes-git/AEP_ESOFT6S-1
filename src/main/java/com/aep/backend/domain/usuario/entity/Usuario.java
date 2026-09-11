@@ -3,6 +3,7 @@ package com.aep.backend.domain.usuario.entity;
 import com.aep.backend.domain.abstraction.DefaultEntity;
 import com.aep.backend.domain.enums.PerfilUsuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({"authorities", "username", "enabled",
+        "accountNonExpired", "accountNonLocked", "credentialsNonExpired"})
 public class Usuario extends DefaultEntity implements UserDetails {
 
     private String nome;
