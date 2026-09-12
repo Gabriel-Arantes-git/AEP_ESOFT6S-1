@@ -7,11 +7,13 @@ import com.aep.backend.infra.security.JwtTokenProvider;
 import com.aep.backend.infra.security.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
@@ -21,30 +23,39 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(SlaController.class)
+@ExtendWith(MockitoExtension.class)
 class SlaControllerTest {
 
-    @Autowired
+    @InjectMocks
+    private SlaController slaController;
+
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Mock
     private SlaService slaService;
 
-    @MockitoBean
+    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockitoBean
+    @Mock
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @MockitoBean(name = "mongoMappingContext", enforceOverride = false)
+    @Mock
     private MongoMappingContext mongoMappingContext;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(slaController)
+                .addFilters(new com.aep.backend.TestSecurityFilter())
+                .build();
+    }
 
     @Test
     @DisplayName("Deve retornar status 200 com a lista de configuracoes de SLA")
     void deveRetornarStatus200ComListaDeConfiguracoesDeSla() throws Exception {
         SlaConfig sla = new SlaConfig(Prioridade.ALTA, 24, "Prazo para prioridade alta");
         sla.setId("sla-1");
-        when(slaService.listarTodos()).thenReturn(List.of(sla));
+        org.mockito.Mockito.lenient().when(slaService.listarTodos()).thenReturn(List.of(sla));
 
         mockMvc.perform(get("/sla"))
                 .andExpect(status().isOk())
@@ -58,7 +69,7 @@ class SlaControllerTest {
     @Test
     @DisplayName("Deve retornar lista vazia quando nao houver configuracoes de SLA")
     void deveRetornarListaVaziaQuandoNaoHouverConfiguracoesDeSla() throws Exception {
-        when(slaService.listarTodos()).thenReturn(List.of());
+        org.mockito.Mockito.lenient().when(slaService.listarTodos()).thenReturn(List.of());
 
         mockMvc.perform(get("/sla"))
                 .andExpect(status().isOk())

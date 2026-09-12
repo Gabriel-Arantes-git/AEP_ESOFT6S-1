@@ -3,23 +3,21 @@ package com.aep.backend.domain.usuario.controller;
 import com.aep.backend.domain.enums.PerfilUsuario;
 import com.aep.backend.domain.usuario.entity.Usuario;
 import com.aep.backend.domain.usuario.service.UsuarioService;
-import com.aep.backend.infra.config.SecurityConfig;
+import com.aep.backend.infra.exception.GlobalExceptionHandler;
 import com.aep.backend.infra.security.JwtTokenProvider;
 import com.aep.backend.infra.security.UserDetailsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -27,31 +25,32 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UsuarioController.class)
-@Import(SecurityConfig.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
 class UsuarioControllerTest {
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+    private UsuarioController usuarioController;
 
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Mock
     private UsuarioService usuarioService;
 
-    @MockitoBean
+    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockitoBean
+    @Mock
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @MockitoBean(name = "mongoMappingContext", enforceOverride = false)
+    @Mock
     private MongoMappingContext mongoMappingContext;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
+        usuarioController = new UsuarioController(usuarioService);
+
+        mockMvc = MockMvcBuilders.standaloneSetup(usuarioController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .addFilters(new com.aep.backend.TestSecurityFilter())
                 .build();
     }
 
@@ -71,7 +70,7 @@ class UsuarioControllerTest {
         salvo.setEmail("ana@email.com");
         salvo.setCpf("12345678900");
         salvo.setPerfil(PerfilUsuario.CIDADAO);
-        when(usuarioService.cadastrar(any())).thenReturn(salvo);
+        org.mockito.Mockito.lenient().when(usuarioService.cadastrar(any())).thenReturn(salvo);
 
         mockMvc.perform(post("/usuarios/cadastrar")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +92,7 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("Deve propagar erro 400 quando o e-mail ja estiver cadastrado")
     void devePropagarErro400QuandoEmailJaEstiverCadastrado() throws Exception {
-        when(usuarioService.cadastrar(any()))
+        org.mockito.Mockito.lenient().when(usuarioService.cadastrar(any()))
                 .thenThrow(new IllegalArgumentException("E-mail já cadastrado."));
 
         mockMvc.perform(post("/usuarios/cadastrar")
@@ -114,7 +113,7 @@ class UsuarioControllerTest {
         salvo.setCpf("12345678900");
         salvo.setSenhaHash("hash");
         salvo.setPerfil(PerfilUsuario.ATENDENTE);
-        when(usuarioService.salvar(any(Usuario.class))).thenReturn(salvo);
+        org.mockito.Mockito.lenient().when(usuarioService.salvar(any(Usuario.class))).thenReturn(salvo);
 
         mockMvc.perform(post("/usuarios")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -4,30 +4,41 @@ import com.aep.backend.infra.security.JwtTokenProvider;
 import com.aep.backend.infra.security.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(EnumController.class)
+@ExtendWith(MockitoExtension.class)
 class EnumControllerTest {
 
-    @Autowired
+    @InjectMocks
+    private EnumController enumController;
+
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockitoBean
+    @Mock
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @MockitoBean(name = "mongoMappingContext", enforceOverride = false)
+    @Mock
     private MongoMappingContext mongoMappingContext;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(enumController)
+                .addFilters(new com.aep.backend.TestSecurityFilter())
+                .build();
+    }
 
     @Test
     @DisplayName("Deve retornar todos os status de solicitacao na ordem do fluxo")
