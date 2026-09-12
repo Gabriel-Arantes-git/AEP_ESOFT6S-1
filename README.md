@@ -160,12 +160,78 @@ Todo service estende `DefaultCrudService<R, E>` e implementa `getRepository()`. 
 |---------------------|-----------------------------------|
 | Linguagem           | Java 21                           |
 | Framework           | Spring Boot 4.0.6                 |
-| Build               | Maven                              |
+| Build               | Maven via wrapper (`mvnw`)        |
 | Banco               | MongoDB (replica set)             |
 | Autenticação        | Spring Security + JWT (jjwt 0.12.6) |
 | Documentação da API | springdoc-openapi 3.1.0 (Swagger)  |
 | Boilerplate         | Lombok                             |
 | Interface           | REST (Swagger) + CLI (terminal)   |
+
+---
+
+## Stack de Testes
+
+A suíte de testes deste projeto usa a stack abaixo para validar regras de negócio, controllers e autenticação:
+
+- JUnit 5 — execução dos testes
+- Mockito — mocks e stubs dos serviços
+- Spring Test / MockMvc — testes de endpoints HTTP e serialização JSON
+- Spring Security Test — autenticação mockada (`@WithMockUser`, `authentication(...)`)
+- AssertJ / Spring Assertions — validações de resultado
+
+Os testes cobrem cenários importantes de fluxo de negócio, como:
+
+- login e autenticação JWT
+- cadastro e validação de usuários
+- abertura e consulta de solicitações
+- permissões por perfil (CIDADAO, ATENDENTE, GESTOR)
+- transições de status e regras de negócio
+
+### Como testar
+
+> Importante: neste projeto o uso do wrapper Maven (`mvnw`) é obrigatório em ambientes sem `mvn` instalado ou sem configuração global correta. O comando `mvn` puro pode falhar fora do ambiente local do projeto.
+
+A partir da raiz do repositório:
+
+#### Windows (PowerShell / CMD)
+
+```powershell
+./mvnw.cmd test
+```
+
+ou para uma classe específica:
+
+```powershell
+./mvnw.cmd -Dtest=UsuarioControllerTest,SolicitacaoControllerTest test
+```
+
+#### Linux / macOS
+
+```bash
+./mvnw test
+```
+
+ou específico:
+
+```bash
+./mvnw -Dtest=UsuarioControllerTest,SolicitacaoControllerTest test
+```
+
+#### Executando somente para ver os testes correrem sem muito log
+
+```bash
+./mvnw -q test
+```
+
+### Validação atual da suíte
+
+A suíte foi validada com sucesso no ambiente atual com o comando:
+
+```bash
+./mvnw -q test
+```
+
+Esse comando retorna sucesso após rodar toda a suíte de testes automatizados do projeto.
 
 ---
 
