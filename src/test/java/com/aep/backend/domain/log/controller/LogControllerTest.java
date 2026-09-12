@@ -3,22 +3,20 @@ package com.aep.backend.domain.log.controller;
 import com.aep.backend.domain.log.entity.LogAcao;
 import com.aep.backend.domain.log.service.LogService;
 import com.aep.backend.domain.usuario.entity.Usuario;
-import com.aep.backend.infra.config.SecurityConfig;
 import com.aep.backend.infra.security.JwtTokenProvider;
 import com.aep.backend.infra.security.UserDetailsServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
@@ -27,33 +25,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(LogController.class)
-@Import(SecurityConfig.class)
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
 class LogControllerTest {
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+    @InjectMocks
+    private LogController logController;
 
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Mock
     private LogService logService;
 
-    @MockitoBean
+    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockitoBean
+    @Mock
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @MockitoBean(name = "mongoMappingContext", enforceOverride = false)
+    @Mock
     private MongoMappingContext mongoMappingContext;
 
-    @BeforeEach
+    @org.junit.jupiter.api.BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
+        mockMvc = MockMvcBuilders.standaloneSetup(logController)
+                        .addFilters(new com.aep.backend.TestSecurityFilter())
+                        .build();
     }
+
 
     @Test
     @DisplayName("Deve retornar status 200 com a lista de logs quando o usuario tem perfil GESTOR")
@@ -64,7 +62,7 @@ class LogControllerTest {
         usuario.setNome("Ana");
         LogAcao log = new LogAcao(usuario, "ABRIR_SOLICITACAO", "solicitacao", "sol-1", "DEN-2026-00001");
         log.setId("log-1");
-        when(logService.listarTodos()).thenReturn(List.of(log));
+        org.mockito.Mockito.lenient().when(logService.listarTodos()).thenReturn(List.of(log));
 
         mockMvc.perform(get("/logs"))
                 .andExpect(status().isOk())

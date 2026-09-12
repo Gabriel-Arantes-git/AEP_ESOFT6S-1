@@ -40,7 +40,9 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .addFilters(new com.aep.backend.TestSecurityFilter())
+                .build();
     }
 
     @Test
@@ -53,9 +55,9 @@ class AuthControllerTest {
         usuario.setPerfil(PerfilUsuario.CIDADAO);
 
         Authentication authentication = mock(Authentication.class);
-        when(authenticationManager.authenticate(any())).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(usuario);
-        when(jwtTokenProvider.generateToken("ana@email.com")).thenReturn("jwt-token");
+        org.mockito.Mockito.lenient().when(authenticationManager.authenticate(any())).thenReturn(authentication);
+        org.mockito.Mockito.lenient().when(authentication.getPrincipal()).thenReturn(usuario);
+        org.mockito.Mockito.lenient().when(jwtTokenProvider.generateToken("ana@email.com")).thenReturn("jwt-token");
 
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

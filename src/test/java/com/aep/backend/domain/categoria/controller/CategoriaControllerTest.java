@@ -6,11 +6,13 @@ import com.aep.backend.infra.security.JwtTokenProvider;
 import com.aep.backend.infra.security.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
@@ -20,23 +22,32 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CategoriaController.class)
+@ExtendWith(MockitoExtension.class)
 class CategoriaControllerTest {
 
-    @Autowired
+    @InjectMocks
+    private CategoriaController categoriaController;
+
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Mock
     private CategoriaService categoriaService;
 
-    @MockitoBean
+    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockitoBean
+    @Mock
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @MockitoBean(name = "mongoMappingContext", enforceOverride = false)
+    @Mock
     private MongoMappingContext mongoMappingContext;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(categoriaController)
+                .addFilters(new com.aep.backend.TestSecurityFilter())
+                .build();
+    }
 
     @Test
     @DisplayName("Deve retornar status 200 com a lista de categorias ativas")
@@ -44,7 +55,7 @@ class CategoriaControllerTest {
         Categoria categoria = new Categoria("Infraestrutura", "Categoria de infraestrutura");
         categoria.setId("cat-1");
         categoria.setAtivo(true);
-        when(categoriaService.listarAtivas()).thenReturn(List.of(categoria));
+        org.mockito.Mockito.lenient().when(categoriaService.listarAtivas()).thenReturn(List.of(categoria));
 
         mockMvc.perform(get("/categorias/ativas"))
                 .andExpect(status().isOk())
@@ -57,7 +68,7 @@ class CategoriaControllerTest {
     @Test
     @DisplayName("Deve retornar lista vazia quando nao houver categorias ativas")
     void deveRetornarListaVaziaQuandoNaoHouverCategoriasAtivas() throws Exception {
-        when(categoriaService.listarAtivas()).thenReturn(List.of());
+        org.mockito.Mockito.lenient().when(categoriaService.listarAtivas()).thenReturn(List.of());
 
         mockMvc.perform(get("/categorias/ativas"))
                 .andExpect(status().isOk())

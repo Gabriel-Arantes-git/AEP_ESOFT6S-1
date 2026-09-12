@@ -7,12 +7,14 @@ import com.aep.backend.infra.security.JwtTokenProvider;
 import com.aep.backend.infra.security.UserDetailsServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,30 +26,39 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CategoriaController.class)
+@ExtendWith(MockitoExtension.class)
 class DefaultCrudControllerTest {
 
-    @Autowired
+    @InjectMocks
+    private CategoriaController categoriaController;
+
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @Mock
     private CategoriaService categoriaService;
 
-    @MockitoBean
+    @Mock
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockitoBean
+    @Mock
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @MockitoBean(name = "mongoMappingContext", enforceOverride = false)
+    @Mock
     private MongoMappingContext mongoMappingContext;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(categoriaController)
+                .addFilters(new com.aep.backend.TestSecurityFilter())
+                .build();
+    }
 
     @Test
     @DisplayName("Deve retornar status 200 com a lista ao listar todos os registros")
     void deveRetornarStatus200ComListaAoListarTodosOsRegistros() throws Exception {
         Categoria categoria = new Categoria("Nome", "Descricao");
         categoria.setId("cat-1");
-        when(categoriaService.listarTodos()).thenReturn(List.of(categoria));
+        org.mockito.Mockito.lenient().when(categoriaService.listarTodos()).thenReturn(List.of(categoria));
 
         mockMvc.perform(get("/categorias"))
                 .andExpect(status().isOk())
@@ -59,7 +70,7 @@ class DefaultCrudControllerTest {
     void deveRetornarStatus200QuandoIdExistir() throws Exception {
         Categoria categoria = new Categoria("Nome", "Descricao");
         categoria.setId("cat-1");
-        when(categoriaService.buscarPorId("cat-1")).thenReturn(Optional.of(categoria));
+        org.mockito.Mockito.lenient().when(categoriaService.buscarPorId("cat-1")).thenReturn(Optional.of(categoria));
 
         mockMvc.perform(get("/categorias/cat-1"))
                 .andExpect(status().isOk())
@@ -69,7 +80,7 @@ class DefaultCrudControllerTest {
     @Test
     @DisplayName("Deve retornar status 404 quando o id nao existir")
     void deveRetornarStatus404QuandoIdNaoExistir() throws Exception {
-        when(categoriaService.buscarPorId("inexistente")).thenReturn(Optional.empty());
+        org.mockito.Mockito.lenient().when(categoriaService.buscarPorId("inexistente")).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/categorias/inexistente"))
                 .andExpect(status().isNotFound());
@@ -80,7 +91,7 @@ class DefaultCrudControllerTest {
     void deveRetornarStatus201AoCriarRegistroValido() throws Exception {
         Categoria salva = new Categoria("Nome", "Descricao");
         salva.setId("cat-1");
-        when(categoriaService.salvar(any(Categoria.class))).thenReturn(salva);
+        org.mockito.Mockito.lenient().when(categoriaService.salvar(any(Categoria.class))).thenReturn(salva);
 
         mockMvc.perform(post("/categorias")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,7 +105,7 @@ class DefaultCrudControllerTest {
     void deveRetornarStatus200ESobrescreverIdDaUrlAoAtualizar() throws Exception {
         Categoria atualizada = new Categoria("Nome Novo", "Descricao Nova");
         atualizada.setId("cat-1");
-        when(categoriaService.atualizar(any(Categoria.class))).thenReturn(atualizada);
+        org.mockito.Mockito.lenient().when(categoriaService.atualizar(any(Categoria.class))).thenReturn(atualizada);
 
         mockMvc.perform(put("/categorias/cat-1")
                         .contentType(MediaType.APPLICATION_JSON)
