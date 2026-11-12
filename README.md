@@ -223,6 +223,19 @@ ou específico:
 ./mvnw -q test
 ```
 
+### Cobertura de testes (JaCoCo)
+
+A cobertura mínima exigida é de **70% das linhas** do projeto. O gate roda junto com o `verify`: abaixo disso o build falha na etapa `jacoco:check`.
+
+```bash
+./mvnw verify          # Linux / macOS
+./mvnw.cmd verify      # Windows
+```
+
+- Relatório HTML: `target/site/jacoco/index.html` (também gera `jacoco.xml` e `jacoco.csv` na mesma pasta)
+- Código gerado pelo Lombok fica fora da medição (`lombok.config`); nenhuma classe escrita à mão é excluída
+- Medição atual: 97,1% das linhas (738 de 760)
+
 ### Validação atual da suíte
 
 A suíte foi validada com sucesso no ambiente atual com o comando:
