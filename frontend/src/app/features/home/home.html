@@ -1,0 +1,76 @@
+<div class="home-page">
+
+  <div class="home-hero">
+    <div class="home-hero__inner">
+      <div>
+        <div class="home-hero__top">
+          <div class="home-hero__logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+          </div>
+          <span class="home-hero__app">ReportaInga</span>
+        </div>
+        <p class="home-hero__greeting">Olá,</p>
+        <h1 class="home-hero__nome">{{ user()?.nome ?? 'Usuário' }}</h1>
+        <p class="home-hero__sub">Registre e acompanhe denúncias urbanas</p>
+      </div>
+    </div>
+  </div>
+
+  <main class="home-content">
+
+    <button class="btn-nova" (click)="novaSolicitacao()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <path d="M19 13H13v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+      </svg>
+      Nova Solicitação / Denúncia
+    </button>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card__icone stat-card__icone--green">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        </div>
+        <span class="stat-card__valor">{{ tratadasNaSemana() }}</span>
+        <span class="stat-card__label">Tratadas esta semana</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icone stat-card__icone--blue">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+        </div>
+        <span class="stat-card__valor">{{ abertas() }}</span>
+        <span class="stat-card__label">Abertas no momento</span>
+      </div>
+    </div>
+
+    <div class="actions-row">
+      <button class="action-card" (click)="acompanhamento()">
+        <div class="action-card__icone">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+          </svg>
+        </div>
+        <span class="action-card__titulo">Acompanhamento</span>
+        <span class="action-card__sub">Veja suas solicitações</span>
+      </button>
+      <button class="action-card" (click)="mapa()">
+        <div class="action-card__icone">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+        </div>
+        <span class="action-card__titulo">Mapa</span>
+        <span class="action-card__sub">Ocorrências no mapa</span>
+      </button>
+    </div>
+
+  </main>
+
+  <app-bottom-nav />
+
+</div>
