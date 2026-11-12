@@ -1,0 +1,85 @@
+<div class="login-page">
+
+  <div class="login-brand">
+    <div class="login-brand__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+    </div>
+    <h1 class="login-brand__title">Reporta<br>Inga</h1>
+    <p class="login-brand__subtitle">Plataforma de registro e acompanhamento de denúncias urbanas.</p>
+    <div class="login-brand__features">
+      <span class="login-brand__feature">
+        <span class="login-brand__feature-dot"></span>
+        Registre ocorrências urbanas
+      </span>
+      <span class="login-brand__feature">
+        <span class="login-brand__feature-dot"></span>
+        Acompanhe o status em tempo real
+      </span>
+      <span class="login-brand__feature">
+        <span class="login-brand__feature-dot"></span>
+        Visualize ocorrências no mapa
+      </span>
+    </div>
+  </div>
+
+  <div class="login-panel">
+    <header class="login-header">
+      <div class="login-header__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+      </div>
+      <h1 class="login-header__title">ReportaInga</h1>
+      <p class="login-header__subtitle">Denúncias Urbanas</p>
+    </header>
+
+    <div class="login-card">
+      <h2 class="login-card__title">Acesso ao Sistema</h2>
+
+      @if (error()) {
+        <p class="error-message">{{ error() }}</p>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <input
+            id="senha"
+            type="password"
+            formControlName="senha"
+            placeholder="Sua senha"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" class="btn-entrar" [disabled]="loginForm.invalid || loading()">
+          {{ loading() ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </form>
+
+      <p class="login-link">
+        Não tem conta?
+        <a routerLink="/cadastro" class="login-link__a">Criar conta</a>
+      </p>
+
+      <p class="login-link">
+        <a routerLink="/home" class="login-link__a login-link__a--ghost">Continuar sem conta</a>
+      </p>
+    </div>
+
+  </div>
+
+</div>

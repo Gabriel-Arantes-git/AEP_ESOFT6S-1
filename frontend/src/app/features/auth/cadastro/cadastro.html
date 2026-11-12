@@ -1,0 +1,185 @@
+<div class="login-page">
+
+  <div class="login-brand">
+    <div class="login-brand__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+    </div>
+    <h1 class="login-brand__title">Reporta<br>Inga</h1>
+    <p class="login-brand__subtitle">Crie sua conta e ajude a melhorar a cidade de Maringá.</p>
+    <div class="login-brand__features">
+      <span class="login-brand__feature">
+        <span class="login-brand__feature-dot"></span>
+        Cadastro gratuito para cidadãos
+      </span>
+      <span class="login-brand__feature">
+        <span class="login-brand__feature-dot"></span>
+        Acompanhe suas denúncias
+      </span>
+      <span class="login-brand__feature">
+        <span class="login-brand__feature-dot"></span>
+        Receba atualizações em tempo real
+      </span>
+    </div>
+  </div>
+
+  <div class="login-panel">
+
+    <header class="login-header">
+      <div class="login-header__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+      </div>
+      <h1 class="login-header__title">Criar conta</h1>
+      <p class="login-header__subtitle">ReportaInga — Denúncias Urbanas</p>
+    </header>
+
+    <div class="login-card">
+
+      @if (sucesso()) {
+        <div class="sucesso-message">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          Conta criada com sucesso! Redirecionando para o login...
+        </div>
+      }
+
+      @if (error()) {
+        <p class="error-message">{{ error() }}</p>
+      }
+
+      @if (submitAttempted() && form.invalid && !sucesso()) {
+        <p class="error-message">Verifique os campos marcados antes de continuar.</p>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+
+        <div class="form-group">
+          <label for="nome">Nome completo</label>
+          <input
+            id="nome"
+            type="text"
+            formControlName="nome"
+            placeholder="Seu nome completo"
+            autocomplete="name"
+            [class.input--erro]="form.get('nome')?.invalid && form.get('nome')?.touched"
+          />
+          @if (form.get('nome')?.errors?.['required'] && form.get('nome')?.touched) {
+            <span class="campo-erro">Nome é obrigatório.</span>
+          } @else if (form.get('nome')?.errors?.['minlength'] && form.get('nome')?.touched) {
+            <span class="campo-erro">Nome deve ter ao menos 3 caracteres.</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+            [class.input--erro]="form.get('email')?.invalid && form.get('email')?.touched"
+          />
+          @if (form.get('email')?.errors?.['required'] && form.get('email')?.touched) {
+            <span class="campo-erro">E-mail é obrigatório.</span>
+          } @else if (form.get('email')?.errors?.['email'] && form.get('email')?.touched) {
+            <span class="campo-erro">Informe um e-mail válido.</span>
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cpf">CPF</label>
+            <input
+              id="cpf"
+              type="text"
+              formControlName="cpf"
+              placeholder="000.000.000-00"
+              autocomplete="off"
+              inputmode="numeric"
+              (input)="mascaraCpf($event)"
+              [class.input--erro]="cpfErro"
+            />
+            @if (cpfErro) {
+              <span class="campo-erro">CPF inválido.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="telefone">Telefone <span class="label-opcional">(opcional)</span></label>
+            <input
+              id="telefone"
+              type="tel"
+              formControlName="telefone"
+              placeholder="(44) 99999-9999"
+              autocomplete="tel"
+              inputmode="numeric"
+              (input)="mascaraTelefone($event)"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="senha">Senha</label>
+            <input
+              id="senha"
+              type="password"
+              formControlName="senha"
+              placeholder="Mínimo 8 caracteres"
+              autocomplete="new-password"
+              [class.input--erro]="form.get('senha')?.invalid && form.get('senha')?.touched"
+            />
+            @if (senhaErro) {
+              <span class="campo-erro">{{ senhaErro }}</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="confirmarSenha">Confirmar senha</label>
+            <input
+              id="confirmarSenha"
+              type="password"
+              formControlName="confirmarSenha"
+              placeholder="Repita a senha"
+              autocomplete="new-password"
+              [class.input--erro]="senhasDiferentes || (form.get('confirmarSenha')?.errors?.['required'] && form.get('confirmarSenha')?.touched)"
+            />
+            @if (form.get('confirmarSenha')?.errors?.['required'] && form.get('confirmarSenha')?.touched) {
+              <span class="campo-erro">Confirmação é obrigatória.</span>
+            } @else if (senhasDiferentes) {
+              <span class="campo-erro">As senhas não coincidem.</span>
+            }
+          </div>
+        </div>
+
+        <div class="requisitos-senha">
+          <span [class.requisito--ok]="senhaRequisitos.tamanho">8+ chars</span>
+          <span [class.requisito--ok]="senhaRequisitos.maiuscula">A-Z</span>
+          <span [class.requisito--ok]="senhaRequisitos.minuscula">a-z</span>
+          <span [class.requisito--ok]="senhaRequisitos.numero">0-9</span>
+          <span [class.requisito--ok]="senhaRequisitos.especial">@$!…</span>
+        </div>
+
+        <button type="submit" class="btn-entrar" [disabled]="loading() || sucesso()">
+          {{ loading() ? 'Criando conta...' : 'Criar conta' }}
+        </button>
+
+      </form>
+
+      <p class="login-link">
+        Já tem conta?
+        <a routerLink="/login" class="login-link__a">Entrar</a>
+      </p>
+
+    </div>
+
+
+
+  </div>
+
+</div>
