@@ -14,12 +14,7 @@ export interface Solicitacao {
   prazoAlvo: string | null;
   dataEncerramento: string | null;
   descricao: string;
-  bairro: string;
-  logradouro: string | null;
-  referencia: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  cep: string | null;
+  localizacao: Localizacao | null;
   anonimo: boolean;
   nomeContato: string | null;
   emailContato: string | null;
@@ -83,6 +78,7 @@ export interface SolicitacaoView {
 }
 
 export function paraSolicitacaoView(s: Solicitacao): SolicitacaoView {
+  const loc = s.localizacao;
   return {
     id: s.id,
     protocolo: s.protocolo,
@@ -95,11 +91,11 @@ export function paraSolicitacaoView(s: Solicitacao): SolicitacaoView {
     prazoAlvo: s.prazoAlvo,
     categoria: s.categoria.nome,
     descricao: s.descricao,
-    pontoReferencia: s.referencia ?? '',
-    lat: s.latitude ?? 0,
-    lng: s.longitude ?? 0,
-    cep: s.cep ?? '',
-    bairro: s.bairro,
-    logradouro: s.logradouro ?? '',
+    pontoReferencia: loc?.referencia ?? '',
+    lat: loc?.latitude ?? 0,
+    lng: loc?.longitude ?? 0,
+    cep: loc?.cep ?? '',
+    bairro: loc?.bairro ?? '',
+    logradouro: loc?.logradouro ?? '',
   };
 }

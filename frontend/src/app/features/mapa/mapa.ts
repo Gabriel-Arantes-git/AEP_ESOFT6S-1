@@ -40,8 +40,8 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   visiveis = computed(() =>
     this.solicitacoes().filter(s =>
-      s.latitude !== null &&
-      s.longitude !== null &&
+      typeof s.localizacao?.latitude === 'number' &&
+      typeof s.localizacao?.longitude === 'number' &&
       (!this.statusFiltro() || s.status === this.statusFiltro())
     )
   );
@@ -84,7 +84,7 @@ export class MapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
     camada.clearLayers();
     const posicoes = this.visiveis().map(s => {
-      const posicao: [number, number] = [s.latitude as number, s.longitude as number];
+      const posicao: [number, number] = [s.localizacao?.latitude as number, s.localizacao?.longitude as number];
       L.marker(posicao, { icon: iconePin(L, this.corDe(s)) })
         .bindPopup(this.criarPopup(s))
         .addTo(camada);
