@@ -6,6 +6,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { SlaService } from '../../core/services/sla.service';
 import { SolicitacaoService } from '../../core/services/solicitacao.service';
 import { Solicitacao } from '../../core/models/solicitacao.model';
+import { COR_PRIORIDADE, FILTRO_SEM_DADOS } from '../../core/constants/solicitacao.constants';
 
 describe('DashboardComponent', () => {
   const listar = vi.fn();
@@ -91,6 +92,20 @@ describe('DashboardComponent', () => {
 
     expect(resultado).toContain('2Alta');
     expect(resultado).toContain('1Sem prioridade');
+  });
+
+  it('cards de prioridade devem usar a cor da prioridade e cinza para sem prioridade', () => {
+    const { el } = montar();
+    const cor = (hex: string) => {
+      const ref = document.createElement('div');
+      ref.style.borderLeftColor = hex;
+      return ref.style.borderLeftColor;
+    };
+    const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-grupo="prioridade"]'));
+    const card = (label: string) => cards.find(c => c.textContent?.includes(label)) as HTMLElement;
+
+    expect(card('Alta').style.borderLeftColor).toBe(cor(COR_PRIORIDADE['ALTA']));
+    expect(card('Sem prioridade').style.borderLeftColor).toBe(cor(FILTRO_SEM_DADOS.cor));
   });
 
   it('deve exibir o resumo de SLA e os prazos configurados', () => {

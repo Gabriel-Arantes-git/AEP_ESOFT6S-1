@@ -4,7 +4,7 @@ import { SlaService } from '../../core/services/sla.service';
 import { SolicitacaoService } from '../../core/services/solicitacao.service';
 import { Solicitacao } from '../../core/models/solicitacao.model';
 import { SlaConfig } from '../../core/models/sla.model';
-import { COR_PRIORIDADE, PRIORIDADE_LABEL, formatarPrazo } from '../../core/constants/solicitacao.constants';
+import { COR_PRIORIDADE, FILTRO_SEM_DADOS, PRIORIDADE_LABEL, formatarPrazo } from '../../core/constants/solicitacao.constants';
 import { resumirSla, totaisPorPrioridade, totaisPorStatus } from '../../core/utils/dashboard.utils';
 import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-nav';
 
@@ -19,7 +19,6 @@ export class DashboardComponent implements OnInit {
   private readonly solicitacaoService = inject(SolicitacaoService);
   private readonly slaService = inject(SlaService);
 
-  readonly corPrioridade = COR_PRIORIDADE;
   readonly prioridadeLabel = PRIORIDADE_LABEL;
   readonly formatarPrazo = formatarPrazo;
 
@@ -32,6 +31,10 @@ export class DashboardComponent implements OnInit {
   porStatus = computed(() => totaisPorStatus(this.solicitacoes()));
   porPrioridade = computed(() => totaisPorPrioridade(this.solicitacoes()));
   resumoSla = computed(() => resumirSla(this.solicitacoes(), new Date()));
+
+  corDaPrioridade(valor: string): string {
+    return COR_PRIORIDADE[valor] ?? FILTRO_SEM_DADOS.cor;
+  }
 
   ngOnInit(): void {
     forkJoin({

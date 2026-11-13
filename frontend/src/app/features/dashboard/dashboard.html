@@ -25,7 +25,7 @@
       <h2 class="dashboard-section__title">Por prioridade</h2>
       <div class="dashboard-grid">
         @for (item of porPrioridade(); track item.valor) {
-          <div class="dashboard-card" data-grupo="prioridade" [style.border-left-color]="corPrioridade[item.valor]">
+          <div class="dashboard-card" data-grupo="prioridade" [style.border-left-color]="corDaPrioridade(item.valor)">
             <span class="dashboard-card__valor">{{ item.total }}</span>
             <span class="dashboard-card__label">{{ item.label }}</span>
           </div>
