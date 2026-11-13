@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "solicitacao")
 @Getter
@@ -25,17 +27,7 @@ public class Solicitacao extends DefaultEntity {
 
     private String descricao;
 
-    private String bairro;
-
-    private String logradouro;
-
-    private String referencia;
-
-    private Double latitude;
-
-    private Double longitude;
-
-    private String cep;
+    private Localizacao localizacao;
 
     private boolean anonimo = false;
 
@@ -56,4 +48,6 @@ public class Solicitacao extends DefaultEntity {
     private UsuarioResumo atendente;
 
     private DepartamentoResumo departamento;
+
+    private List<MovimentacaoResumo> historico = new ArrayList<>();
 }

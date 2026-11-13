@@ -98,7 +98,7 @@ public class GestorMenu {
         try {
             Solicitacao s = solicitacaoService.buscarPorProtocolo(protocolo);
             SolicitacaoPrinter.imprimirSolicitacao(s);
-            SolicitacaoPrinter.imprimirHistorico(solicitacaoService.buscarHistorico(s.getId()));
+            SolicitacaoPrinter.imprimirHistorico(s.getHistorico());
 
             System.out.print("\nVer logs de auditoria? [s/n]: ");
             if (scanner.nextLine().trim().equalsIgnoreCase("s")) {

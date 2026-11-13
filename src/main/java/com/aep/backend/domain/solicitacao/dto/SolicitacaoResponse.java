@@ -1,8 +1,11 @@
 package com.aep.backend.domain.solicitacao.dto;
 
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
+import com.aep.backend.domain.solicitacao.entity.MovimentacaoResumo;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record SolicitacaoResponse(
         String id,
@@ -13,18 +16,14 @@ public record SolicitacaoResponse(
         LocalDateTime prazoAlvo,
         LocalDateTime dataEncerramento,
         String descricao,
-        String bairro,
-        String logradouro,
-        String referencia,
-        Double latitude,
-        Double longitude,
-        String cep,
+        Localizacao localizacao,
         boolean anonimo,
         String nomeContato,
         String emailContato,
         CategoriaInfo categoria,
         DepartamentoInfo departamento,
-        UsuarioInfo atendente
+        UsuarioInfo atendente,
+        List<MovimentacaoResumo> historico
 ) {
     public record CategoriaInfo(String id, String nome) {}
     public record DepartamentoInfo(String id, String nome) {}
@@ -40,12 +39,7 @@ public record SolicitacaoResponse(
                 s.getPrazoAlvo(),
                 s.getDataEncerramento(),
                 s.getDescricao(),
-                s.getBairro(),
-                s.getLogradouro(),
-                s.getReferencia(),
-                s.getLatitude(),
-                s.getLongitude(),
-                s.getCep(),
+                s.getLocalizacao(),
                 s.isAnonimo(),
                 s.getNomeContato(),
                 s.getEmailContato(),
@@ -55,7 +49,8 @@ public record SolicitacaoResponse(
                         : null,
                 s.getAtendente() != null
                         ? new UsuarioInfo(s.getAtendente().id(), s.getAtendente().nome())
-                        : null
+                        : null,
+                s.getHistorico()
         );
     }
 }
