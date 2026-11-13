@@ -1,6 +1,25 @@
 # Sistema de Denúncias Ambientais — AEP
 
-Sistema para registro e acompanhamento de denúncias de problemas urbanos e ambientais — descarte irregular de lixo, queimadas, poluição, falhas de manutenção — com triagem, encaminhamento ao departamento responsável e cálculo automático de prazo (SLA). Evolução da versão `aep_2026` (Java + H2 + CLI), agora em Spring Boot com API REST e persistência em MongoDB. Esta entrega expõe a mesma lógica de negócio por dois caminhos: endpoints REST (documentados via Swagger) e um modo de interação por terminal (perfil `cli`).
+Sistema para registro e acompanhamento de denúncias de problemas urbanos e ambientais — descarte irregular de lixo, queimadas, poluição, falhas de manutenção — com triagem, encaminhamento ao departamento responsável e cálculo automático de prazo (SLA). Evolução da versão `aep_2026` (Java + H2 + CLI), agora em Spring Boot com API REST e persistência em MongoDB. A mesma lógica de negócio é exposta por três caminhos: endpoints REST (documentados via Swagger), um frontend Angular e um modo de interação por terminal (perfil `cli`).
+
+## Documentação
+
+| Documento | Conteúdo |
+|---|---|
+| [`docs/arquitetura.md`](docs/arquitetura.md) | Camadas do backend e do frontend, autenticação, permissões por endpoint, fluxo de status e SLA |
+| [`docs/modelo-de-colecoes.md`](docs/modelo-de-colecoes.md) | Diagrama das coleções, relacionamentos e subdocumentos (`localizacao`, `historico`) |
+| [`frontend/README.md`](frontend/README.md) | Como rodar e testar o frontend |
+
+## Estrutura do repositório
+
+```
+.
+├── src/            Backend Spring Boot (API REST + CLI)
+├── frontend/       Frontend Angular 21
+├── docs/           Arquitetura e modelo de coleções
+├── pom.xml         Build Maven (wrapper: mvnw / mvnw.cmd)
+└── openspec/       Especificações e histórico de mudanças
+```
 
 ---
 
@@ -60,6 +79,8 @@ Gerado automaticamente na abertura. Para denúncias anônimas, é o único meio 
 
 ## Arquitetura
 
+Visão completa (backend, frontend, autenticação, permissões e fluxo de status/SLA) em [`docs/arquitetura.md`](docs/arquitetura.md). Estrutura do backend:
+
 ```
 src/main/java/com/aep/backend/
 │
@@ -93,7 +114,7 @@ src/main/java/com/aep/backend/
 │   ├── categoria/        entity · repository · service · controller
 │   ├── departamento/     entity · repository · service · controller
 │   ├── sla/               entity · repository · service · controller
-│   ├── solicitacao/      entity (Solicitacao, Movimentacao) · repository · service · controller · dto
+│   ├── solicitacao/      entity (Solicitacao, Movimentacao, Localizacao) · repository · service · controller · dto
 │   └── log/               entity (LogAcao) · repository · service · controller
 │
 └── infra/
@@ -115,6 +136,8 @@ Todo service estende `DefaultCrudService<R, E>` e implementa `getRepository()`. 
 - **MongoDB**, um documento por coleção via `@Document`
 - Índices únicos: `usuario.email`, `usuario.cpf`, `solicitacao.protocolo`, `categoria.nome`, `departamento_destino.nome`, `sla_config.prioridade`
 - Dados iniciais (usuários, categorias, departamentos, SLA) semeados por `DataInitializer` na subida da aplicação — idempotente, seguro rodar múltiplas vezes
+
+Diagrama, relacionamentos e subdocumentos (`localizacao`, `historico` e os resumos de referência): [`docs/modelo-de-colecoes.md`](docs/modelo-de-colecoes.md).
 
 **Coleções:**
 
@@ -165,7 +188,8 @@ Todo service estende `DefaultCrudService<R, E>` e implementa `getRepository()`. 
 | Autenticação        | Spring Security + JWT (jjwt 0.12.6) |
 | Documentação da API | springdoc-openapi 3.1.0 (Swagger)  |
 | Boilerplate         | Lombok                             |
-| Interface           | REST (Swagger) + CLI (terminal)   |
+| Interface           | REST (Swagger) + CLI (terminal) + frontend web |
+| Frontend            | Angular 21 (standalone), Leaflet, Vitest |
 
 ---
 
@@ -248,6 +272,47 @@ Esse comando retorna sucesso após rodar toda a suíte de testes automatizados d
 
 ---
 
+## Como gerar o relatório de cobertura
+
+Os dois lados exigem **no mínimo 70%** e falham o comando se ficarem abaixo: backend por linhas (JaCoCo), frontend por statements, branches, functions e lines (Vitest).
+
+### Pré-requisitos
+
+- Java 21 e **Docker em execução** (os testes de integração do backend sobem um MongoDB via Testcontainers)
+- Node.js 22 e npm (frontend)
+
+### Passo a passo
+
+1. Na raiz do repositório, gere os dois relatórios de uma vez:
+
+   ```bash
+   ./scripts/cobertura.sh              # Linux / macOS / Git Bash
+   ./scripts/cobertura.ps1             # Windows (PowerShell)
+   ```
+
+   Para um lado só, passe `backend` ou `frontend` (`./scripts/cobertura.sh backend`, `./scripts/cobertura.ps1 -Alvo frontend`).
+
+2. Ou rode cada lado na mão:
+
+   | Lado | Comando | Relatório HTML |
+   |---|---|---|
+   | Backend | `./mvnw verify` (`./mvnw.cmd verify` no Windows) | `target/site/jacoco/index.html` |
+   | Frontend | `cd frontend && npm ci && npm run test:coverage` | `frontend/coverage/aep-denuncias/index.html` |
+
+3. Abra o `index.html` no navegador. A exigência de 70% é o `jacoco:check` no backend e o `coverageThresholds` do `angular.json` no frontend; abaixo disso o comando termina com erro.
+
+### No GitHub Actions
+
+O workflow [`.github/workflows/cobertura.yml`](.github/workflows/cobertura.yml) roda em todo pull request e em push para `main` e `develop`, com dois jobs em paralelo (backend e frontend). Cada job falha se a cobertura ficar abaixo de 70% e publica o relatório HTML como artefato:
+
+1. Abra o pull request e vá na aba **Checks** (ou em **Actions**, na execução "Cobertura").
+2. Role até **Artifacts** no fim da página de resumo.
+3. Baixe `cobertura-backend` ou `cobertura-frontend`, descompacte e abra o `index.html` (no frontend, dentro da pasta `aep-denuncias`).
+
+Os artefatos são publicados mesmo quando o gate falha, para ver o que ficou descoberto.
+
+---
+
 ## Como Rodar
 
 ### 1. Banco de dados
@@ -271,18 +336,51 @@ A URI padrão (`application.properties`) já aponta para `mongodb://localhost:27
 - Swagger UI em `http://localhost:8080/api/swagger-ui.html`
 - Login: `POST /api/auth/login` — o token retornado vai no header `Authorization: Bearer <token>`
 
-### 3. Modo CLI (terminal)
+### 3. Frontend (Angular)
+
+Com o backend no ar, em outro terminal (Node.js 20+):
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+- Aplicação em `http://localhost:4200`
+- Em desenvolvimento, `/api` é encaminhado ao backend pelo `proxy.conf.json`; o CORS do backend já libera `http://localhost:4200`
+- Testes: `npm test` (watch) ou `npm run test:coverage` (cobertura mínima de 70%)
+
+### 4. Modo CLI (terminal)
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=cli
 ```
 
-Sobe o mesmo contexto Spring (Mongo, Security, seed de dados), sem abrir porta HTTP, e apresenta o menu de terminal (`TerminalRunner`) chamando diretamente os mesmos services usados pelos endpoints REST.
+Sobe o mesmo contexto Spring (Mongo, Security, seed de dados), sem abrir porta HTTP, e apresenta o menu de terminal (`TerminalRunner`) chamando diretamente os mesmos services usados pelos endpoints REST. O MongoDB do passo 1 precisa estar rodando.
 
-### Usuários padrão (semeados por `DataInitializer`)
+### Variáveis de ambiente
+
+| Variável | Padrão | Uso |
+|---|---|---|
+| `MONGODB_URI` | `mongodb://localhost:27017/aepdb?replicaSet=rs0` | Conexão com o MongoDB |
+| `JWT_SECRET` | valor de desenvolvimento no `application.properties` | Segredo (Base64) de assinatura do JWT. Defina um próprio fora do ambiente local |
+
+---
+
+## Perfis e usuários padrão
+
+| Perfil | O que faz |
+|---|---|
+| `CIDADAO` | Abre solicitações (identificadas ou anônimas), acompanha as suas e consulta qualquer protocolo |
+| `ATENDENTE` | Vê a fila, faz a triagem (prioridade + departamento) e move o status até `RESOLVIDO` |
+| `GESTOR` | Tudo do atendente, mais encerrar solicitações, gerenciar usuários e consultar a auditoria (logs) |
+
+Usuários semeados por `DataInitializer` (apenas desenvolvimento — troque as senhas fora do ambiente local):
 
 | E-mail                | Senha   | Perfil    |
 |------------------------|---------|-----------|
 | admin@gov              | admin   | GESTOR    |
 | atendente@gov          | 123     | ATENDENTE |
 | teste123@gmail.com     | teste   | CIDADAO   |
+
+A matriz completa de permissões por endpoint está em [`docs/arquitetura.md`](docs/arquitetura.md#autenticação-e-autorização).
