@@ -59,6 +59,20 @@ class UsuarioServiceTest {
     }
 
     @Test
+    @DisplayName("Deve forçar perfil CIDADAO no autocadastro mesmo quando o request pedir GESTOR")
+    void deveForcarPerfilCidadaoNoAutocadastro() {
+        UsuarioRequest request = new UsuarioRequest(
+                "Mallory", "mallory@email.com", "12345678901", null, "senha123", PerfilUsuario.GESTOR);
+        when(usuarioRepository.findByEmail("mallory@email.com")).thenReturn(Optional.empty());
+        when(passwordEncoder.encode("senha123")).thenReturn("hash");
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Usuario resultado = usuarioService.cadastrar(request);
+
+        assertEquals(PerfilUsuario.CIDADAO, resultado.getPerfil());
+    }
+
+    @Test
     @DisplayName("Não deve cadastrar usuário quando o email já estiver em uso")
     void naoDeveCadastrarUsuarioQuandoEmailJaEstiverEmUso() {
         UsuarioRequest request = new UsuarioRequest(
