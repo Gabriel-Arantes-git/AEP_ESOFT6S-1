@@ -56,10 +56,8 @@ public class SolicitacaoController {
     })
     public ResponseEntity<SolicitacaoResponse> criarAnonima(@RequestBody @Valid SolicitacaoRequest req) {
         SolicitacaoRequest reqAnonima = new SolicitacaoRequest(
-                req.categoriaId(), req.descricao(), req.bairro(),
-                req.logradouro(), req.referencia(), true,
-                req.nomeContato(), req.emailContato(),
-                req.latitude(), req.longitude(), req.cep()
+                req.categoriaId(), req.descricao(), req.localizacao(), true,
+                req.nomeContato(), req.emailContato()
         );
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SolicitacaoResponse.from(solicitacaoService.criar(reqAnonima, null)));
@@ -110,6 +108,7 @@ public class SolicitacaoController {
     }
 
     @GetMapping("/protocolo/{protocolo}")
+    @SecurityRequirements
     @Operation(summary = "Busca uma denúncia pelo número de protocolo")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Denúncia encontrada"),
@@ -143,6 +142,7 @@ public class SolicitacaoController {
     }
 
     @GetMapping("/{id}/movimentacoes")
+    @SecurityRequirements
     @Operation(summary = "Lista o histórico de movimentações da denúncia",
             description = "Cada troca de status gera uma movimentação com responsável e comentário.")
     @ApiResponse(responseCode = "200", description = "Histórico retornado")

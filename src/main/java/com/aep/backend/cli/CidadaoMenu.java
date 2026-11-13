@@ -5,6 +5,7 @@ import com.aep.backend.domain.categoria.entity.CategoriaResumo;
 import com.aep.backend.domain.categoria.service.CategoriaService;
 import com.aep.backend.domain.enums.PerfilUsuario;
 import com.aep.backend.domain.solicitacao.dto.SolicitacaoRequest;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.solicitacao.service.SolicitacaoService;
 import com.aep.backend.domain.usuario.dto.UsuarioRequest;
@@ -92,10 +93,8 @@ public class CidadaoMenu {
         String emailContato = scanner.nextLine().trim();
 
         SolicitacaoRequest request = new SolicitacaoRequest(
-                dadosBase.categoriaId(), dadosBase.descricao(), dadosBase.bairro(),
-                dadosBase.logradouro(), dadosBase.referencia(), true,
-                nome.isBlank() ? null : nome, emailContato.isBlank() ? null : emailContato,
-                dadosBase.latitude(), dadosBase.longitude(), dadosBase.cep());
+                dadosBase.categoriaId(), dadosBase.descricao(), dadosBase.localizacao(), true,
+                nome.isBlank() ? null : nome, emailContato.isBlank() ? null : emailContato);
 
         try {
             Solicitacao salva = solicitacaoService.criar(request, null);
@@ -135,11 +134,11 @@ public class CidadaoMenu {
         System.out.print("> ");
         String descricao = scanner.nextLine().trim();
 
-        return new SolicitacaoRequest(
-                categoria.id(), descricao, bairro,
-                logradouro.isBlank() ? null : logradouro,
-                referencia.isBlank() ? null : referencia,
-                anonimo, null, null, null, null, null);
+        Localizacao localizacao = new Localizacao(
+                logradouro.isBlank() ? null : logradouro, bairro, null,
+                referencia.isBlank() ? null : referencia, null, null);
+
+        return new SolicitacaoRequest(categoria.id(), descricao, localizacao, anonimo, null, null);
     }
 
     private void consultarProtocolo() {
@@ -149,7 +148,7 @@ public class CidadaoMenu {
         try {
             Solicitacao s = solicitacaoService.buscarPorProtocolo(protocolo);
             SolicitacaoPrinter.imprimirSolicitacao(s);
-            SolicitacaoPrinter.imprimirHistorico(solicitacaoService.buscarHistorico(s.getId()));
+            SolicitacaoPrinter.imprimirHistorico(s.getHistorico());
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }

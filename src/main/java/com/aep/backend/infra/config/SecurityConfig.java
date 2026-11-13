@@ -45,6 +45,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/solicitacoes/anonima").permitAll()
                         .requestMatchers(HttpMethod.GET, "/solicitacoes/publicas").permitAll()
                         .requestMatchers(HttpMethod.GET, "/solicitacoes/anonimas").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/solicitacoes/protocolo/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/solicitacoes/*/movimentacoes").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios/cadastrar").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

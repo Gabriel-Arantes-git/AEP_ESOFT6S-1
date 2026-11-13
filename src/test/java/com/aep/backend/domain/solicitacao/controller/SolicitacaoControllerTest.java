@@ -103,8 +103,9 @@ class SolicitacaoControllerTest {
     private String requestValido() {
         return """
                 {"categoriaId":"cat-1","descricao":"Buraco na rua causando transtornos para os moradores da região",
-                 "bairro":"Centro","logradouro":"Rua A","referencia":"Perto da praça","anonimo":false,
-                 "nomeContato":"Ana","emailContato":"ana@email.com","latitude":-23.5,"longitude":-46.6,"cep":"01000-000"}
+                 "localizacao":{"logradouro":"Rua A","bairro":"Centro","cep":"01000-000","referencia":"Perto da praça",
+                 "latitude":-23.5,"longitude":-46.6},
+                 "anonimo":false,"nomeContato":"Ana","emailContato":"ana@email.com"}
                 """;
     }
 
@@ -231,10 +232,13 @@ class SolicitacaoControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar status 403 ao buscar por protocolo sem autenticacao")
-    void deveRetornarStatus403AoBuscarPorProtocoloSemAutenticacao() throws Exception {
+    @DisplayName("Deve buscar uma solicitacao pelo protocolo sem autenticacao")
+    void deveBuscarUmaSolicitacaoPeloProtocoloSemAutenticacao() throws Exception {
+        org.mockito.Mockito.lenient().when(solicitacaoService.buscarPorProtocolo("DEN-2026-00001")).thenReturn(criarSolicitacao());
+
         mockMvc.perform(get("/solicitacoes/protocolo/DEN-2026-00001"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.protocolo").value("DEN-2026-00001"));
     }
 
     @Test
@@ -308,10 +312,14 @@ class SolicitacaoControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar status 403 ao buscar historico sem autenticacao")
-    void deveRetornarStatus403AoBuscarHistoricoSemAutenticacao() throws Exception {
+    @DisplayName("Deve retornar o historico de movimentacoes sem autenticacao")
+    void deveRetornarHistoricoDeMovimentacoesSemAutenticacao() throws Exception {
+        org.mockito.Mockito.lenient().when(solicitacaoService.buscarHistorico("sol-1")).thenReturn(List.of());
+
         mockMvc.perform(get("/solicitacoes/sol-1/movimentacoes"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
+
+        verify(solicitacaoService).buscarHistorico("sol-1");
     }
 
     @Test

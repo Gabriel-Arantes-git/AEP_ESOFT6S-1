@@ -1,7 +1,8 @@
 package com.aep.backend.cli;
 
 import com.aep.backend.domain.log.entity.LogAcao;
-import com.aep.backend.domain.solicitacao.entity.Movimentacao;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
+import com.aep.backend.domain.solicitacao.entity.MovimentacaoResumo;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 
 import java.util.List;
@@ -16,8 +17,9 @@ public final class SolicitacaoPrinter {
         System.out.println("Categoria : " + s.getCategoria().nome());
         System.out.println("Status    : " + s.getStatus());
         System.out.println("Prioridade: " + (s.getPrioridade() != null ? s.getPrioridade() : "-"));
-        System.out.println("Bairro    : " + s.getBairro());
-        if (s.getLogradouro() != null) System.out.println("Logradouro: " + s.getLogradouro());
+        Localizacao local = s.getLocalizacao();
+        System.out.println("Bairro    : " + (local != null ? local.bairro() : null));
+        if (local != null && local.logradouro() != null) System.out.println("Logradouro: " + local.logradouro());
         System.out.println("Descrição : " + s.getDescricao());
         System.out.println("Aberta em : " + s.getDataCadastro().toLocalDate());
         String abertoPor = s.isAnonimo() ? "Anônimo" : (s.getUsuarioId() != null ? "Usuário " + s.getUsuarioId() : "Anônimo");
@@ -28,17 +30,17 @@ public final class SolicitacaoPrinter {
         else System.out.println("Departamento alvo: Não definido");
     }
 
-    public static void imprimirHistorico(List<Movimentacao> historico) {
+    public static void imprimirHistorico(List<MovimentacaoResumo> historico) {
         if (historico.isEmpty()) return;
         System.out.println("\n--- Histórico ---");
-        for (Movimentacao m : historico) {
+        for (MovimentacaoResumo m : historico) {
             System.out.printf("[%s] %s → %s | %s%n",
-                    m.getDataCadastro().toLocalDate(),
-                    m.getStatusAnterior() != null ? m.getStatusAnterior() : "-",
-                    m.getStatusNovo(),
-                    m.getComentario());
-            if (m.getJustificativaAtraso() != null) {
-                System.out.println("  Justificativa de atraso: " + m.getJustificativaAtraso());
+                    m.dataMovimentacao().toLocalDate(),
+                    m.statusAnterior() != null ? m.statusAnterior() : "-",
+                    m.statusNovo(),
+                    m.comentario());
+            if (m.justificativaAtraso() != null) {
+                System.out.println("  Justificativa de atraso: " + m.justificativaAtraso());
             }
         }
     }
@@ -69,7 +71,7 @@ public final class SolicitacaoPrinter {
         for (Solicitacao s : lista) {
             System.out.printf("%-20s %-15s %-10s %-20s%n",
                     s.getProtocolo(),
-                    s.getBairro(),
+                    s.getLocalizacao() != null ? s.getLocalizacao().bairro() : null,
                     s.getPrioridade() != null ? s.getPrioridade() : "-",
                     s.getCategoria().nome());
         }
