@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -13,6 +14,11 @@ export const routes: Routes = [
   {
     path: 'home',
     loadComponent: () => import('./features/home/home').then(m => m.HomeComponent)
+  },
+  {
+    path: 'triagem',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/triagem/triagem').then(m => m.TriagemComponent)
   },
   { path: '**', redirectTo: 'login' }
 ];
