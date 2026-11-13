@@ -248,6 +248,47 @@ Esse comando retorna sucesso após rodar toda a suíte de testes automatizados d
 
 ---
 
+## Como gerar o relatório de cobertura
+
+Os dois lados exigem **no mínimo 70%** e falham o comando se ficarem abaixo: backend por linhas (JaCoCo), frontend por statements, branches, functions e lines (Vitest).
+
+### Pré-requisitos
+
+- Java 21 e **Docker em execução** (os testes de integração do backend sobem um MongoDB via Testcontainers)
+- Node.js 22 e npm (frontend)
+
+### Passo a passo
+
+1. Na raiz do repositório, gere os dois relatórios de uma vez:
+
+   ```bash
+   ./scripts/cobertura.sh              # Linux / macOS / Git Bash
+   ./scripts/cobertura.ps1             # Windows (PowerShell)
+   ```
+
+   Para um lado só, passe `backend` ou `frontend` (`./scripts/cobertura.sh backend`, `./scripts/cobertura.ps1 -Alvo frontend`).
+
+2. Ou rode cada lado na mão:
+
+   | Lado | Comando | Relatório HTML |
+   |---|---|---|
+   | Backend | `./mvnw verify` (`./mvnw.cmd verify` no Windows) | `target/site/jacoco/index.html` |
+   | Frontend | `cd frontend && npm ci && npm run test:coverage` | `frontend/coverage/aep-denuncias/index.html` |
+
+3. Abra o `index.html` no navegador. A exigência de 70% é o `jacoco:check` no backend e o `coverageThresholds` do `angular.json` no frontend; abaixo disso o comando termina com erro.
+
+### No GitHub Actions
+
+O workflow [`.github/workflows/cobertura.yml`](.github/workflows/cobertura.yml) roda em todo pull request e em push para `main` e `develop`, com dois jobs em paralelo (backend e frontend). Cada job falha se a cobertura ficar abaixo de 70% e publica o relatório HTML como artefato:
+
+1. Abra o pull request e vá na aba **Checks** (ou em **Actions**, na execução "Cobertura").
+2. Role até **Artifacts** no fim da página de resumo.
+3. Baixe `cobertura-backend` ou `cobertura-frontend`, descompacte e abra o `index.html` (no frontend, dentro da pasta `aep-denuncias`).
+
+Os artefatos são publicados mesmo quando o gate falha, para ver o que ficou descoberto.
+
+---
+
 ## Como Rodar
 
 ### 1. Banco de dados
