@@ -7,6 +7,7 @@ import com.aep.backend.domain.enums.PerfilUsuario;
 import com.aep.backend.domain.enums.Prioridade;
 import com.aep.backend.domain.enums.StatusSolicitacao;
 import com.aep.backend.domain.solicitacao.dto.MoverStatusRequest;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.solicitacao.service.SolicitacaoService;
 import com.aep.backend.domain.usuario.entity.Usuario;
@@ -64,7 +65,7 @@ class AtendenteMenuTest {
         solicitacao.setId("sol-1");
         solicitacao.setProtocolo("DEN-2026-00001");
         solicitacao.setCategoria(new CategoriaResumo("cat-1", "Lixo Irregular"));
-        solicitacao.setBairro("Centro");
+        solicitacao.setLocalizacao(new Localizacao(null, "Centro", null, null, null, null));
         solicitacao.setDescricao("Descricao");
         solicitacao.setDataCadastro(LocalDateTime.now());
         return solicitacao;
@@ -205,7 +206,6 @@ class AtendenteMenuTest {
     void deveVerDetalhesDaSolicitacaoQuandoProtocoloExistir() {
         Solicitacao solicitacao = solicitacaoBase();
         when(solicitacaoService.buscarPorProtocolo("DEN-2026-00001")).thenReturn(solicitacao);
-        when(solicitacaoService.buscarHistorico("sol-1")).thenReturn(List.of());
 
         criarMenu("6\nden-2026-00001\n0\n").exibir(atendente);
 

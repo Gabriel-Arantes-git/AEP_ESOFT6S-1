@@ -4,6 +4,7 @@ import com.aep.backend.domain.categoria.entity.CategoriaResumo;
 import com.aep.backend.domain.departamento.entity.DepartamentoResumo;
 import com.aep.backend.domain.enums.Prioridade;
 import com.aep.backend.domain.enums.StatusSolicitacao;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.usuario.entity.UsuarioResumo;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,7 @@ class SolicitacaoResponseTest {
         solicitacao.setCategoria(new CategoriaResumo("cat-1", "Lixo Irregular"));
         solicitacao.setDepartamento(new DepartamentoResumo("dep-1", "Prefeitura"));
         solicitacao.setAtendente(new UsuarioResumo("user-1", "Ana"));
-        solicitacao.setBairro("Centro");
+        solicitacao.setLocalizacao(new Localizacao(null, "Centro", null, null, null, null));
         solicitacao.setDescricao("Descricao");
         solicitacao.setAnonimo(false);
 
@@ -38,6 +39,8 @@ class SolicitacaoResponseTest {
         assertEquals("cat-1", response.categoria().id());
         assertEquals("dep-1", response.departamento().id());
         assertEquals("user-1", response.atendente().id());
+        assertEquals("Centro", response.localizacao().bairro());
+        assertEquals(0, response.historico().size());
     }
 
     @Test
@@ -48,7 +51,7 @@ class SolicitacaoResponseTest {
         solicitacao.setProtocolo("DEN-2026-00002");
         solicitacao.setStatus(StatusSolicitacao.ABERTO);
         solicitacao.setCategoria(new CategoriaResumo("cat-1", "Lixo Irregular"));
-        solicitacao.setBairro("Centro");
+        solicitacao.setLocalizacao(new Localizacao(null, "Centro", null, null, null, null));
         solicitacao.setDescricao("Descricao");
         solicitacao.setAnonimo(true);
 
