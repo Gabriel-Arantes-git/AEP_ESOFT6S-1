@@ -12,7 +12,7 @@ describe('rotas da aplicação', () => {
     expect(rota('**').redirectTo).toBe('login');
   });
 
-  it.each(['login', 'cadastro', 'home'])('/%s deve carregar o componente sob demanda', async path => {
+  it.each(['login', 'cadastro', 'home', 'triagem'])('/%s deve carregar o componente sob demanda', async path => {
     const componente = await (rota(path).loadComponent as () => Promise<unknown>)();
 
     expect(componente).toBeTypeOf('function');

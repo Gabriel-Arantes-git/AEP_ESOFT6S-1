@@ -57,6 +57,15 @@ describe('SolicitacaoService', () => {
     req.flush([]);
   });
 
+  it('listarPorStatus deve fazer GET em /solicitacoes com o parametro status', () => {
+    service.listarPorStatus('TRIAGEM').subscribe();
+
+    const req = http.expectOne(r => r.url === base);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.get('status')).toBe('TRIAGEM');
+    req.flush([]);
+  });
+
   it('buscarPorProtocolo deve fazer GET em /protocolo/{protocolo}', () => {
     service.buscarPorProtocolo('DEN-2026-00001').subscribe();
 
