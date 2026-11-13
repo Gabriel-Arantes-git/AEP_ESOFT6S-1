@@ -1,0 +1,277 @@
+<div class="listagem-page">
+
+  <header class="top-bar">
+    <a routerLink="/home" class="top-bar__logo" aria-label="Página inicial">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </a>
+    <span class="top-bar__title">Listagem de Denúncias</span>
+    <div class="top-bar__spacer"></div>
+  </header>
+
+  <main class="page-content">
+
+    <form class="busca-area protocolo-area" (submit)="$event.preventDefault(); consultarProtocolo()">
+      <div class="busca-campo">
+        <svg class="busca-icone" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input class="busca-input protocolo-input" type="text" placeholder="Protocolo (ex: DEN-2026-00001)"
+          aria-label="Número do protocolo" [value]="protocoloBusca()" (input)="onProtocoloInput($event)" />
+      </div>
+      <button type="submit" class="btn-filtros btn-consultar" [disabled]="!protocoloBusca().trim() || consultandoProtocolo()">
+        {{ consultandoProtocolo() ? 'Consultando...' : 'Consultar' }}
+      </button>
+    </form>
+
+    @if (erroProtocolo()) {
+      <p class="error-message">{{ erroProtocolo() }}</p>
+    }
+
+    @if (logado()) {
+    <div class="busca-area">
+      <div class="busca-campo">
+        <svg class="busca-icone" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        <input class="busca-input" type="text" placeholder="Digite aqui..."
+          [value]="termoBusca()" (input)="onBusca($event)" />
+      </div>
+      <button class="btn-filtros" [class.btn-filtros--ativo]="filtrosAberto()" (click)="toggleFiltros()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+          <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+        </svg>
+        Filtros
+      </button>
+    </div>
+
+    @if (filtrosAberto()) {
+      <div class="filtros-chips">
+        <button class="chip" [class.chip--ativo]="!filtroStatus()" (click)="setFiltro(null)">Todos</button>
+        @for (op of filtroOpcoes(); track op.valor) {
+          <button class="chip" [class.chip--ativo]="filtroStatus() === op.valor" (click)="setFiltro(op.valor)">
+            {{ op.label }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="lista">
+      @if (paginaItens().length === 0) {
+        <div class="lista-vazia">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="40" height="40">
+            <path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.05 15.96 0 13.45 0c-1.32 0-2.48.56-3.33 1.44L9 3.17 7.89 1.45C7.04.56 5.88 0 4.55 0 2.05 0 0 2.05 0 4.64c0 .48.11.92.18 1.36H0v2h20V6zm-9.56-.95C11.07 4.38 12.2 3.5 13.45 3.5c.83 0 1.45.67 1.45 1.14 0 .83-.67 1.36-1.5 1.36H11v-2zM3.5 4.64c0-1.07.87-1.14 1.05-1.14 1.25 0 2.38.88 3 1.5H5.05C4.17 5 3.5 4.47 3.5 3.64zM0 20c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8H0v12z"/>
+          </svg>
+          <p>Nenhuma denúncia encontrada.</p>
+          <a routerLink="/solicitacao/nova" class="btn-nova">Fazer denúncia</a>
+        </div>
+      }
+
+      @for (sol of paginaItens(); track sol.id) {
+        <div class="card">
+          <div class="card__topo">
+            <div class="card__imagem">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+            </div>
+            <div class="card__info">
+              <p class="card__titulo">{{ sol.categoria }}</p>
+              <p class="card__protocolo">Protocolo: {{ sol.protocolo }}</p>
+            </div>
+            <div class="card__acoes">
+              <button class="card__btn-acao" (click)="abrirModal(sol)" aria-label="Informações">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                </svg>
+                <span>Info</span>
+              </button>
+            </div>
+          </div>
+          <div class="card__rodape">
+            @if (!isAdmin() && !ehValidada(sol)) {
+              <span class="badge badge--analise">Em análise</span>
+            } @else {
+              <span class="badge" [attr.data-status]="sol.status">{{ statusLabel(sol.status) }}</span>
+            }
+            <span class="card__data">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="13" height="13">
+                <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
+              </svg>
+              {{ formatarData(sol.dataAbertura) }}
+            </span>
+            <span class="card__local">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="13" height="13">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              {{ sol.bairro || sol.logradouro || '—' }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (filtradas().length > 0) {
+      <div class="paginacao">
+        <button class="paginacao__btn" [disabled]="paginaCorrente() === 1" (click)="paginaAnterior()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+          </svg>
+          Anterior
+        </button>
+        <div class="paginacao__nums">
+          @for (p of paginas(); track p) {
+            <button class="paginacao__num" [class.paginacao__num--ativo]="p === paginaCorrente()" (click)="irPara(p)">
+              {{ p }}
+            </button>
+          }
+        </div>
+        <button class="paginacao__btn" [disabled]="paginaCorrente() === totalPaginas()" (click)="proximaPagina()">
+          Próxima
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+          </svg>
+        </button>
+      </div>
+    }
+    }
+
+  </main>
+
+  @if (modalAberta()) {
+    <div class="modal-overlay" (click)="fecharModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal__handle"></div>
+
+        <div class="modal__cabecalho">
+          <h2 class="modal__titulo">Informações</h2>
+          <button class="modal__fechar" (click)="fecharModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal__protocolo-bloco">
+          <p class="modal__rotulo-sm">Número do Protocolo</p>
+          <p class="modal__protocolo">{{ modalAberta()!.protocolo }}</p>
+        </div>
+
+        @if (!isAdmin() && !ehValidada(modalAberta()!)) {
+          <div class="modal__analise">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="36" height="36">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <p class="modal__analise-titulo">Denúncia em análise</p>
+            <p class="modal__analise-desc">Sua denúncia foi recebida e está aguardando revisão e validação pela equipe responsável.</p>
+            <span class="badge" [attr.data-status]="modalAberta()!.status">{{ statusLabel(modalAberta()!.status) }}</span>
+            <p class="modal__analise-data">Aberta em {{ formatarData(modalAberta()!.dataAbertura) }}</p>
+          </div>
+        } @else {
+          <div class="modal__secao">
+            <p class="modal__rotulo-sm">Andamento</p>
+            <div class="stepper">
+              @for (s of STATUS_OPCOES; track s.valor; let i = $index; let last = $last) {
+                <div class="stepper__item">
+                  <div class="stepper__ponto"
+                    [class.stepper__ponto--feito]="i <= statusIndice(modalAberta()!.status)"
+                    [class.stepper__ponto--atual]="s.valor === modalAberta()!.status">
+                  </div>
+                  <span class="stepper__label">{{ s.label }}</span>
+                </div>
+                @if (!last) {
+                  <div class="stepper__linha" [class.stepper__linha--feita]="i < statusIndice(modalAberta()!.status)"></div>
+                }
+              }
+            </div>
+          </div>
+
+          @if (modalAberta()!.prioridade) {
+            <div class="modal__secao modal__secao--row">
+              <div>
+                <p class="modal__rotulo-sm">Prioridade</p>
+                <span class="badge-prioridade" [attr.data-prioridade]="modalAberta()!.prioridade">
+                  {{ prioridadeLabel(modalAberta()!.prioridade) }}
+                </span>
+              </div>
+              <div>
+                <p class="modal__rotulo-sm">Prazo</p>
+                <p class="modal__valor">{{ prazoLabel(modalAberta()!.prioridade) }}</p>
+              </div>
+              @if (modalAberta()!.departamento) {
+                <div>
+                  <p class="modal__rotulo-sm">Departamento</p>
+                  <p class="modal__valor">{{ modalAberta()!.departamento }}</p>
+                </div>
+              }
+            </div>
+          }
+
+          <div class="modal__secao">
+            <p class="modal__rotulo-sm">Categoria</p>
+            <p class="modal__valor">{{ modalAberta()!.categoria }}</p>
+          </div>
+
+          <div class="modal__secao">
+            <p class="modal__rotulo-sm">Descrição</p>
+            <p class="modal__valor">{{ modalAberta()!.descricao }}</p>
+          </div>
+
+          @if (modalAberta()!.pontoReferencia) {
+            <div class="modal__secao">
+              <p class="modal__rotulo-sm">Ponto de Referência</p>
+              <p class="modal__valor">{{ modalAberta()!.pontoReferencia }}</p>
+            </div>
+          }
+
+          <div class="modal__secao">
+            <p class="modal__rotulo-sm">Localização</p>
+            <p class="modal__valor">
+              {{ modalAberta()!.logradouro || '—' }}
+              @if (modalAberta()!.bairro) { · {{ modalAberta()!.bairro }} }
+              @if (modalAberta()!.cep) { · CEP {{ modalAberta()!.cep }} }
+            </p>
+          </div>
+
+          <div class="modal__secao modal__secao--row">
+            <div>
+              <p class="modal__rotulo-sm">Abertura</p>
+              <p class="modal__valor">{{ formatarData(modalAberta()!.dataAbertura) }}</p>
+            </div>
+            @if (modalAberta()!.dataAtualizacao) {
+              <div>
+                <p class="modal__rotulo-sm">Atualização</p>
+                <p class="modal__valor">{{ formatarData(modalAberta()!.dataAtualizacao) }}</p>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="modal__secao">
+          <p class="modal__rotulo-sm">Histórico</p>
+          @if (carregandoHistorico()) {
+            <p class="modal__valor">Carregando histórico...</p>
+          } @else if (historico().length === 0) {
+            <p class="modal__valor">Nenhuma movimentação registrada.</p>
+          } @else {
+            <ul class="historico">
+              @for (mov of historico(); track mov.id) {
+                <li class="historico__item">
+                  <p class="historico__status">
+                    {{ mov.statusAnterior ? statusLabel(mov.statusAnterior) + ' → ' : '' }}{{ statusLabel(mov.statusNovo) }}
+                  </p>
+                  <p class="historico__comentario">{{ mov.comentario }}</p>
+                  <p class="historico__meta">{{ formatarData(mov.dataMovimentacao) }} · {{ mov.responsavelNome ?? '—' }}</p>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <app-bottom-nav />
+
+</div>

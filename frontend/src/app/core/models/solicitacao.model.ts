@@ -28,18 +28,22 @@ export interface Solicitacao {
   atendente: UsuarioInfo | null;
 }
 
+export interface Localizacao {
+  logradouro: string | null;
+  bairro: string | null;
+  cep: string | null;
+  referencia: string | null;
+  latitude: number | null;
+  longitude: number | null;
+}
+
 export interface NovaSolicitacaoRequest {
   categoriaId: string;
   descricao: string;
-  bairro: string;
-  logradouro?: string | null;
-  referencia?: string | null;
+  localizacao: Localizacao;
   anonimo: boolean;
   nomeContato?: string | null;
   emailContato?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  cep?: string | null;
 }
 
 export interface MoverStatusRequest {

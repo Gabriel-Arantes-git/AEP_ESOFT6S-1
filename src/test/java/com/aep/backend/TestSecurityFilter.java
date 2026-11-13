@@ -95,6 +95,8 @@ public class TestSecurityFilter implements Filter {
                     || path.startsWith("/solicitacoes/publicas")
                     || path.startsWith("/solicitacoes/anonimas")
                     || path.startsWith("/solicitacoes/anonima")
+                    || (path.startsWith("/solicitacoes/protocolo/") && method.equalsIgnoreCase("GET"))
+                    || (path.matches("/solicitacoes/[^/]+/movimentacoes") && method.equalsIgnoreCase("GET"))
                     || (path.startsWith("/usuarios/cadastrar") && method.equalsIgnoreCase("POST"))) {
                 chain.doFilter(request, response);
                 return;

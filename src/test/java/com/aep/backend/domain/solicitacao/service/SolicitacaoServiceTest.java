@@ -16,6 +16,7 @@ import com.aep.backend.domain.sla.service.SlaService;
 import com.aep.backend.domain.solicitacao.dto.MoverStatusRequest;
 import com.aep.backend.domain.solicitacao.dto.SolicitacaoRequest;
 import com.aep.backend.domain.solicitacao.entity.Movimentacao;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.solicitacao.repository.MovimentacaoRepository;
 import com.aep.backend.domain.solicitacao.repository.SolicitacaoRepository;
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -74,15 +76,10 @@ class SolicitacaoServiceTest {
         SolicitacaoRequest request = new SolicitacaoRequest(
                 "cat-1",
                 "Descrição da solicitação com mais de cinquenta caracteres para análise válida.",
-                "Centro",
-                "Rua das Flores",
-                "Próximo ao mercado",
+                new Localizacao("Rua das Flores", "Centro", "01000-000", "Próximo ao mercado", -23.56, -46.67),
                 false,
                 "Ana Souza",
-                "ana@email.com",
-                -23.56,
-                -46.67,
-                "01000-000"
+                "ana@email.com"
         );
         when(categoriaRepository.findById("cat-1")).thenReturn(Optional.of(categoria));
         when(solicitacaoRepository.countByProtocoloStartingWith("DEN-" + Year.now().getValue() + "-")).thenReturn(0L);
@@ -96,8 +93,11 @@ class SolicitacaoServiceTest {
         assertEquals(StatusSolicitacao.ABERTO, resultado.getStatus());
         assertEquals(CategoriaResumo.from(categoria), resultado.getCategoria());
         assertEquals("user-1", resultado.getUsuarioId());
+        assertEquals("Centro", resultado.getLocalizacao().bairro());
+        assertEquals(1, resultado.getHistorico().size());
+        assertEquals(StatusSolicitacao.ABERTO, resultado.getHistorico().get(0).statusNovo());
         assertTrue(resultado.getProtocolo().startsWith("DEN-" + Year.now().getValue() + "-"));
-        verify(solicitacaoRepository).save(any(Solicitacao.class));
+        verify(solicitacaoRepository, times(2)).save(any(Solicitacao.class));
         verify(movimentacaoRepository).save(any(Movimentacao.class));
         verify(logRepository).save(any(LogAcao.class));
     }
@@ -109,15 +109,10 @@ class SolicitacaoServiceTest {
         SolicitacaoRequest request = new SolicitacaoRequest(
                 "cat-1",
                 "Descrição da denúncia anônima com mais de cinquenta caracteres para ser válida.",
-                "Centro",
-                "Rua das Flores",
-                "Próximo ao mercado",
+                new Localizacao("Rua das Flores", "Centro", "01000-000", "Próximo ao mercado", -23.56, -46.67),
                 true,
                 "Ana Souza",
-                "ana@email.com",
-                -23.56,
-                -46.67,
-                "01000-000"
+                "ana@email.com"
         );
         when(categoriaRepository.findById("cat-1")).thenReturn(Optional.of(categoria));
         when(solicitacaoRepository.countByProtocoloStartingWith("DEN-" + Year.now().getValue() + "-")).thenReturn(0L);
@@ -140,15 +135,10 @@ class SolicitacaoServiceTest {
         SolicitacaoRequest request = new SolicitacaoRequest(
                 "cat-1",
                 null,
-                "Centro",
-                "Rua das Flores",
-                "Próximo ao mercado",
+                new Localizacao("Rua das Flores", "Centro", "01000-000", "Próximo ao mercado", -23.56, -46.67),
                 false,
                 "Ana Souza",
-                "ana@email.com",
-                -23.56,
-                -46.67,
-                "01000-000"
+                "ana@email.com"
         );
 
         IllegalArgumentException excecao = assertThrows(
@@ -166,15 +156,10 @@ class SolicitacaoServiceTest {
         SolicitacaoRequest request = new SolicitacaoRequest(
                 "cat-1",
                 "Descrição curta",
-                "Centro",
-                "Rua das Flores",
-                "Próximo ao mercado",
+                new Localizacao("Rua das Flores", "Centro", "01000-000", "Próximo ao mercado", -23.56, -46.67),
                 true,
                 "Ana Souza",
-                "ana@email.com",
-                -23.56,
-                -46.67,
-                "01000-000"
+                "ana@email.com"
         );
 
         IllegalArgumentException excecao = assertThrows(
@@ -192,15 +177,10 @@ class SolicitacaoServiceTest {
         SolicitacaoRequest request = new SolicitacaoRequest(
                 "cat-inexistente",
                 "Descrição da solicitação com mais de cinquenta caracteres para análise válida.",
-                "Centro",
-                "Rua das Flores",
-                "Próximo ao mercado",
+                new Localizacao("Rua das Flores", "Centro", "01000-000", "Próximo ao mercado", -23.56, -46.67),
                 false,
                 "Ana Souza",
-                "ana@email.com",
-                -23.56,
-                -46.67,
-                "01000-000"
+                "ana@email.com"
         );
         when(categoriaRepository.findById("cat-inexistente")).thenReturn(Optional.empty());
 
@@ -241,6 +221,8 @@ class SolicitacaoServiceTest {
         assertEquals(DepartamentoResumo.from(departamento), solicitacao.getDepartamento());
         assertEquals(UsuarioResumo.from(responsavel), solicitacao.getAtendente());
         assertNotNull(solicitacao.getPrazoAlvo());
+        assertEquals(1, solicitacao.getHistorico().size());
+        assertEquals(StatusSolicitacao.TRIAGEM, solicitacao.getHistorico().get(0).statusNovo());
         verify(solicitacaoRepository).save(any(Solicitacao.class));
         verify(movimentacaoRepository).save(any(Movimentacao.class));
         verify(logRepository).save(any(LogAcao.class));

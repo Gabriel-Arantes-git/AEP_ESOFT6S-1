@@ -141,7 +141,7 @@ public class AtendenteMenu {
         try {
             Solicitacao s = solicitacaoService.buscarPorProtocolo(protocolo);
             SolicitacaoPrinter.imprimirSolicitacao(s);
-            SolicitacaoPrinter.imprimirHistorico(solicitacaoService.buscarHistorico(s.getId()));
+            SolicitacaoPrinter.imprimirHistorico(s.getHistorico());
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }

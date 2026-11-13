@@ -13,6 +13,7 @@ import com.aep.backend.domain.sla.service.SlaService;
 import com.aep.backend.domain.solicitacao.dto.MoverStatusRequest;
 import com.aep.backend.domain.solicitacao.dto.SolicitacaoRequest;
 import com.aep.backend.domain.solicitacao.entity.Movimentacao;
+import com.aep.backend.domain.solicitacao.entity.MovimentacaoResumo;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.solicitacao.repository.MovimentacaoRepository;
 import com.aep.backend.domain.solicitacao.repository.SolicitacaoRepository;
@@ -48,12 +49,7 @@ public class SolicitacaoService {
         s.setCategoria(CategoriaResumo.from(categoriaRepository.findById(req.categoriaId())
                 .orElseThrow(() -> new IllegalArgumentException("Categoria não encontrada: " + req.categoriaId()))));
         s.setDescricao(req.descricao());
-        s.setBairro(req.bairro());
-        s.setLogradouro(req.logradouro());
-        s.setReferencia(req.referencia());
-        s.setLatitude(req.latitude());
-        s.setLongitude(req.longitude());
-        s.setCep(req.cep());
+        s.setLocalizacao(req.localizacao());
         s.setAnonimo(req.anonimo());
         s.setNomeContato(req.nomeContato());
         s.setEmailContato(req.emailContato());
@@ -96,7 +92,6 @@ public class SolicitacaoService {
             s.setDataEncerramento(LocalDateTime.now());
 
         s.setStatus(req.novoStatus());
-        solicitacaoRepository.save(s);
 
         registrarMovimentacao(s, anterior, req.novoStatus(), req.comentario(), responsavel);
         logRepository.save(new LogAcao(responsavel, "MOVER_STATUS", "solicitacao", s.getId(),
@@ -161,5 +156,7 @@ public class SolicitacaoService {
         m.setComentario(comentario);
         m.setResponsavel(UsuarioResumo.from(responsavel));
         movimentacaoRepository.save(m);
+        s.getHistorico().add(MovimentacaoResumo.from(m));
+        solicitacaoRepository.save(s);
     }
 }
