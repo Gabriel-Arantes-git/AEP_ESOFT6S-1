@@ -110,6 +110,7 @@ public class SolicitacaoController {
     }
 
     @GetMapping("/protocolo/{protocolo}")
+    @SecurityRequirements
     @Operation(summary = "Busca uma denúncia pelo número de protocolo")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Denúncia encontrada"),
@@ -143,6 +144,7 @@ public class SolicitacaoController {
     }
 
     @GetMapping("/{id}/movimentacoes")
+    @SecurityRequirements
     @Operation(summary = "Lista o histórico de movimentações da denúncia",
             description = "Cada troca de status gera uma movimentação com responsável e comentário.")
     @ApiResponse(responseCode = "200", description = "Histórico retornado")
