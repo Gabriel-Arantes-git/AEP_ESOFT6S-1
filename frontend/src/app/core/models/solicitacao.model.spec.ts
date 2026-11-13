@@ -10,12 +10,14 @@ describe('paraSolicitacaoView', () => {
     prazoAlvo: '2026-11-02T10:00:00',
     dataEncerramento: null,
     descricao: 'Queimada em terreno baldio',
-    bairro: 'Centro',
-    logradouro: 'Rua A',
-    referencia: 'Perto da praça',
-    latitude: -25.4,
-    longitude: -49.2,
-    cep: '80000-000',
+    localizacao: {
+      logradouro: 'Rua A',
+      bairro: 'Centro',
+      cep: '80000-000',
+      referencia: 'Perto da praça',
+      latitude: -25.4,
+      longitude: -49.2,
+    },
     anonimo: false,
     nomeContato: null,
     emailContato: null,
@@ -45,11 +47,7 @@ describe('paraSolicitacaoView', () => {
     const view = paraSolicitacaoView({
       ...base,
       departamento: null,
-      referencia: null,
-      latitude: null,
-      longitude: null,
-      cep: null,
-      logradouro: null,
+      localizacao: { logradouro: null, bairro: null, cep: null, referencia: null, latitude: null, longitude: null },
       dataEncerramento: '2026-11-03T09:00:00',
     });
 
@@ -59,7 +57,14 @@ describe('paraSolicitacaoView', () => {
     expect(view.lat).toBe(0);
     expect(view.lng).toBe(0);
     expect(view.cep).toBe('');
+    expect(view.bairro).toBe('');
     expect(view.logradouro).toBe('');
     expect(view.dataAtualizacao).toBe('2026-11-03T09:00:00');
+  });
+
+  it('deve preencher padrões quando a solicitação não tem localização', () => {
+    const view = paraSolicitacaoView({ ...base, localizacao: null });
+
+    expect(view).toMatchObject({ pontoReferencia: '', lat: 0, lng: 0, cep: '', bairro: '', logradouro: '' });
   });
 });

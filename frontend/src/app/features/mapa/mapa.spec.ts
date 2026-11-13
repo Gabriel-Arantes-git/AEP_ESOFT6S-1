@@ -45,12 +45,14 @@ describe('MapaComponent', () => {
     prazoAlvo: null,
     dataEncerramento: null,
     descricao: 'Buraco na rua',
-    bairro: 'Centro',
-    logradouro: null,
-    referencia: null,
-    latitude: -23.4,
-    longitude: -51.9,
-    cep: null,
+    localizacao: {
+      logradouro: null,
+      bairro: 'Centro',
+      cep: null,
+      referencia: null,
+      latitude: -23.4,
+      longitude: -51.9,
+    },
     anonimo: false,
     nomeContato: null,
     emailContato: null,
@@ -109,7 +111,12 @@ describe('MapaComponent', () => {
   });
 
   it('deve criar um marcador por solicitação com coordenadas e ajustar o enquadramento', async () => {
-    listarPublicas.mockReturnValue(of([solicitacao('ABERTO'), solicitacao('TRIAGEM', { latitude: null, longitude: null })]));
+    listarPublicas.mockReturnValue(of([
+      solicitacao('ABERTO'),
+      solicitacao('TRIAGEM', {
+        localizacao: { logradouro: null, bairro: 'Centro', cep: null, referencia: null, latitude: null, longitude: null },
+      }),
+    ]));
 
     const { el } = await montar();
 
@@ -117,6 +124,25 @@ describe('MapaComponent', () => {
     expect(leaflet.marker).toHaveBeenCalledWith([-23.4, -51.9], expect.anything());
     expect(leaflet.mapa.fitBounds).toHaveBeenCalled();
     expect(el.querySelector('.mapa-total')?.textContent).toContain('1 solicitação');
+  });
+
+  it('solicitação sem localização não deve gerar marcador nem entrar no total', async () => {
+    listarPublicas.mockReturnValue(of([solicitacao('ABERTO'), solicitacao('TRIAGEM', { localizacao: null })]));
+
+    const { component, el } = await montar();
+
+    expect(leaflet.marker).toHaveBeenCalledTimes(1);
+    expect(component.visiveis().map(s => s.status)).toEqual(['ABERTO']);
+    expect(el.querySelector('.mapa-total')?.textContent).toContain('1 solicitação');
+  });
+
+  it('sem nenhuma solicitação com coordenadas não deve ajustar o enquadramento', async () => {
+    listarPublicas.mockReturnValue(of([solicitacao('ABERTO', { localizacao: null })]));
+
+    await montar();
+
+    expect(leaflet.marker).not.toHaveBeenCalled();
+    expect(leaflet.mapa.fitBounds).not.toHaveBeenCalled();
   });
 
   it('filtrar por status deve redesenhar apenas os marcadores do status', async () => {

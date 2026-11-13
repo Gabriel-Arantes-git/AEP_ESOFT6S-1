@@ -22,12 +22,14 @@ describe('TriagemComponent', () => {
     prazoAlvo: null,
     dataEncerramento: null,
     descricao: 'Buraco na rua',
-    bairro: 'Centro',
-    logradouro: null,
-    referencia: null,
-    latitude: null,
-    longitude: null,
-    cep: null,
+    localizacao: {
+      logradouro: null,
+      bairro: 'Centro',
+      cep: null,
+      referencia: null,
+      latitude: null,
+      longitude: null,
+    },
     anonimo: false,
     nomeContato: null,
     emailContato: null,
@@ -71,6 +73,20 @@ describe('TriagemComponent', () => {
     const { el } = montar();
 
     expect(el.querySelectorAll('.triagem-item')).toHaveLength(2);
+  });
+
+  it('deve exibir categoria e bairro da localização', () => {
+    const { el } = montar();
+
+    expect(el.querySelector('.triagem-item__categoria')?.textContent?.trim()).toBe('Via · Centro');
+  });
+
+  it('sem localização deve exibir só a categoria', () => {
+    listar.mockReturnValue(of([solicitacao('ABERTO', { localizacao: null })]));
+
+    const { el } = montar();
+
+    expect(el.querySelector('.triagem-item__categoria')?.textContent?.trim()).toBe('Via');
   });
 
   it('ABERTO exige prioridade, departamento e comentário antes de mover para TRIAGEM', () => {

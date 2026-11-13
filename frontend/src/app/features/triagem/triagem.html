@@ -60,7 +60,7 @@
         <button type="button" class="triagem-item__btn" (click)="selecionar(s)">
           <span class="triagem-item__protocolo">{{ s.protocolo }}</span>
           <span class="triagem-item__status">{{ rotuloStatus(s.status) }}</span>
-          <span class="triagem-item__categoria">{{ s.categoria.nome }} · {{ s.bairro }}</span>
+          <span class="triagem-item__categoria">{{ s.categoria.nome }}@if (s.localizacao?.bairro) { · {{ s.localizacao?.bairro }}}</span>
         </button>
       </li>
     } @empty {
