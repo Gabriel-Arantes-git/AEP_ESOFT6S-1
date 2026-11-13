@@ -5,6 +5,7 @@ import com.aep.backend.domain.enums.PerfilUsuario;
 import com.aep.backend.domain.enums.StatusSolicitacao;
 import com.aep.backend.domain.log.entity.LogAcao;
 import com.aep.backend.domain.solicitacao.dto.MoverStatusRequest;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.solicitacao.service.SolicitacaoService;
 import com.aep.backend.domain.usuario.entity.Usuario;
@@ -59,7 +60,7 @@ class GestorMenuTest {
         solicitacao.setId("sol-1");
         solicitacao.setProtocolo("DEN-2026-00001");
         solicitacao.setCategoria(new CategoriaResumo("cat-1", "Lixo Irregular"));
-        solicitacao.setBairro("Centro");
+        solicitacao.setLocalizacao(new Localizacao(null, "Centro", null, null, null, null));
         solicitacao.setDescricao("Descricao");
         solicitacao.setDataCadastro(LocalDateTime.now());
         return solicitacao;
@@ -144,7 +145,6 @@ class GestorMenuTest {
         Solicitacao solicitacao = solicitacaoBase();
         LogAcao log = new LogAcao(gestor, "MOVER_STATUS", "solicitacao", "sol-1", "ABERTO -> TRIAGEM");
         when(solicitacaoService.buscarPorProtocolo("DEN-2026-00001")).thenReturn(solicitacao);
-        when(solicitacaoService.buscarHistorico("sol-1")).thenReturn(List.of());
         when(solicitacaoService.buscarLogs("sol-1")).thenReturn(List.of(log));
 
         criarMenu("4\nden-2026-00001\ns\n0\n").exibir(gestor);
@@ -158,7 +158,6 @@ class GestorMenuTest {
     void naoDeveExibirLogsDeAuditoriaQuandoNaoConfirmarConsulta() {
         Solicitacao solicitacao = solicitacaoBase();
         when(solicitacaoService.buscarPorProtocolo("DEN-2026-00001")).thenReturn(solicitacao);
-        when(solicitacaoService.buscarHistorico("sol-1")).thenReturn(List.of());
 
         criarMenu("4\nden-2026-00001\nn\n0\n").exibir(gestor);
 

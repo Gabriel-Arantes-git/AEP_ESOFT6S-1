@@ -103,8 +103,9 @@ class SolicitacaoControllerTest {
     private String requestValido() {
         return """
                 {"categoriaId":"cat-1","descricao":"Buraco na rua causando transtornos para os moradores da região",
-                 "bairro":"Centro","logradouro":"Rua A","referencia":"Perto da praça","anonimo":false,
-                 "nomeContato":"Ana","emailContato":"ana@email.com","latitude":-23.5,"longitude":-46.6,"cep":"01000-000"}
+                 "localizacao":{"logradouro":"Rua A","bairro":"Centro","cep":"01000-000","referencia":"Perto da praça",
+                 "latitude":-23.5,"longitude":-46.6},
+                 "anonimo":false,"nomeContato":"Ana","emailContato":"ana@email.com"}
                 """;
     }
 

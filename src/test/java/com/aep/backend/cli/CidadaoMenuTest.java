@@ -4,6 +4,7 @@ import com.aep.backend.domain.categoria.entity.Categoria;
 import com.aep.backend.domain.categoria.service.CategoriaService;
 import com.aep.backend.domain.enums.PerfilUsuario;
 import com.aep.backend.domain.solicitacao.dto.SolicitacaoRequest;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.solicitacao.service.SolicitacaoService;
 import com.aep.backend.domain.usuario.dto.UsuarioRequest;
@@ -163,11 +164,10 @@ class CidadaoMenuTest {
         solicitacao.setId("sol-1");
         solicitacao.setProtocolo("DEN-2026-00001");
         solicitacao.setCategoria(new com.aep.backend.domain.categoria.entity.CategoriaResumo("cat-1", "Lixo Irregular"));
-        solicitacao.setBairro("Centro");
+        solicitacao.setLocalizacao(new Localizacao(null, "Centro", null, null, null, null));
         solicitacao.setDescricao("Descricao");
         solicitacao.setDataCadastro(java.time.LocalDateTime.now());
         when(solicitacaoService.buscarPorProtocolo("DEN-2026-00001")).thenReturn(solicitacao);
-        when(solicitacaoService.buscarHistorico("sol-1")).thenReturn(List.of());
 
         CidadaoMenu menu = criarMenu("3\nden-2026-00001\n0\n");
         menu.exibir();
