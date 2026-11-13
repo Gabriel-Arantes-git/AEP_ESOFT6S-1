@@ -14,5 +14,13 @@ export const routes: Routes = [
     path: 'home',
     loadComponent: () => import('./features/home/home').then(m => m.HomeComponent)
   },
+  {
+    path: 'solicitacao/nova',
+    loadComponent: () => import('./features/solicitacao/nova/nova-solicitacao').then(m => m.NovaSolicitacaoComponent)
+  },
+  {
+    path: 'solicitacao/nova/localizacao',
+    loadComponent: () => import('./features/solicitacao/localizacao/localizacao').then(m => m.LocalizacaoComponent)
+  },
   { path: '**', redirectTo: 'login' }
 ];
