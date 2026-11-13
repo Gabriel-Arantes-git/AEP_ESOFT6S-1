@@ -20,7 +20,7 @@ describe('LocalizacaoComponent', () => {
       imports: [LocalizacaoComponent],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { isAuthenticated: () => autenticado, isGestor: () => false, logout: vi.fn() } },
+        { provide: AuthService, useValue: { isAuthenticated: () => autenticado, isGestor: () => false, isAdmin: () => false, logout: vi.fn() } },
         { provide: GeocodingService, useValue: { reverter } },
         { provide: SolicitacaoService, useValue: { criar, criarAnonima } },
       ],

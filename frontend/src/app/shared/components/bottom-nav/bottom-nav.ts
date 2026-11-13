@@ -17,6 +17,10 @@ export class BottomNavComponent {
     return this.auth.isAuthenticated();
   }
 
+  get isAdmin(): boolean {
+    return this.auth.isAdmin();
+  }
+
   get isGestor(): boolean {
     return this.auth.isGestor();
   }

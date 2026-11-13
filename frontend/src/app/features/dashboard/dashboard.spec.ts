@@ -45,7 +45,7 @@ describe('DashboardComponent', () => {
         provideRouter([]),
         { provide: SolicitacaoService, useValue: { listar } },
         { provide: SlaService, useValue: { listar: listarSla } },
-        { provide: AuthService, useValue: { isGestor: () => true, isAuthenticated: () => true } },
+        { provide: AuthService, useValue: { isGestor: () => true, isAdmin: () => true, isAuthenticated: () => true } },
       ],
     });
     const fixture = TestBed.createComponent(DashboardComponent);
