@@ -1,0 +1,36 @@
+<div class="logs-page">
+  <header class="logs-header">
+    <h1 class="logs-header__title">Trilha de auditoria</h1>
+    <select
+      id="filtro-solicitacao"
+      class="logs-header__filtro"
+      aria-label="Filtrar por solicitação"
+      (change)="filtrarPorSolicitacao($any($event.target).value)"
+    >
+      <option value="">Todas as solicitações</option>
+      @for (s of solicitacoes(); track s.id) {
+        <option [value]="s.id">{{ s.protocolo }}</option>
+      }
+    </select>
+  </header>
+
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+
+  <ul class="logs-lista">
+    @for (log of logs(); track log.id) {
+      <li class="logs-item">
+        <span class="logs-item__acao">{{ log.acao }}</span>
+        <span class="logs-item__detalhes">{{ log.detalhes }}</span>
+        <span class="logs-item__meta">{{ log.usuarioNome ?? 'Sistema' }} · {{ log.dataAcao }}</span>
+      </li>
+    } @empty {
+      @if (!loading() && !error()) {
+        <li class="logs-vazio">Nenhum log encontrado.</li>
+      }
+    }
+  </ul>
+</div>
+
+<app-bottom-nav />

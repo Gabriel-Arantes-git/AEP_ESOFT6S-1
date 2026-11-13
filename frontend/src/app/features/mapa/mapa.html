@@ -1,0 +1,26 @@
+<div class="mapa-page">
+  <header class="mapa-header">
+    <h1 class="mapa-header__title">Mapa de solicitações</h1>
+    <select
+      id="filtro-status"
+      class="mapa-header__filtro"
+      aria-label="Filtrar por status"
+      (change)="filtrarPorStatus($any($event.target).value)"
+    >
+      <option value="">Todos os status</option>
+      @for (s of statusOpcoes; track s.valor) {
+        <option [value]="s.valor">{{ s.label }}</option>
+      }
+    </select>
+  </header>
+
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+
+  <div #mapa class="mapa-container"></div>
+
+  <p class="mapa-total">{{ visiveis().length }} solicitação(ões) no mapa</p>
+</div>
+
+<app-bottom-nav />

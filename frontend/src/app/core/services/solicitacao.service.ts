@@ -27,6 +27,10 @@ export class SolicitacaoService {
     return this.http.get<Solicitacao[]>(this.base);
   }
 
+  listarPorStatus(status: string): Observable<Solicitacao[]> {
+    return this.http.get<Solicitacao[]>(this.base, { params: { status } });
+  }
+
   listarMinhas(): Observable<Solicitacao[]> {
     return this.http.get<Solicitacao[]>(`${this.base}/minhas`);
   }

@@ -8,6 +8,11 @@ export const STATUS_OPCOES = [
 
 export const STATUS_FLUXO = STATUS_OPCOES.map(s => s.valor);
 
+export function proximoStatus(atual: string): string | null {
+  const indice = (STATUS_FLUXO as string[]).indexOf(atual);
+  return indice >= 0 && indice < STATUS_FLUXO.length - 1 ? STATUS_FLUXO[indice + 1] : null;
+}
+
 export const FILTRO_USUARIO = [
   { valor: 'EM_ANALISE',  label: 'Em análise' },
   { valor: 'TRIAGEM',     label: 'Triagem' },

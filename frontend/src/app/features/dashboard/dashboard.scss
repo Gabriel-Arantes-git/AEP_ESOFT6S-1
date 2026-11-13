@@ -1,0 +1,82 @@
+$primary:    #1a6b3c;
+$surface:    #ffffff;
+$bg:         #f8fafc;
+$text:       #1e293b;
+$text-muted: #64748b;
+$border:     #e2e8f0;
+
+.dashboard-page {
+  min-height: 100dvh;
+  padding: 1rem 1rem 5rem;
+  background: $bg;
+  color: $text;
+}
+
+.dashboard-header {
+  margin-bottom: 1rem;
+
+  &__title {
+    font-size: 1.25rem;
+  }
+
+  &__total {
+    color: $text-muted;
+    font-size: 0.875rem;
+  }
+}
+
+.dashboard-section {
+  margin-bottom: 1.5rem;
+
+  &__title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.5rem;
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  background: $surface;
+  border: 1px solid $border;
+  border-left: 4px solid $primary;
+  border-radius: 12px;
+
+  &__valor {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &__label {
+    color: $text-muted;
+    font-size: 0.875rem;
+  }
+
+  &--alerta {
+    border-left-color: #dc2626;
+  }
+}
+
+.dashboard-sla {
+  list-style: none;
+  margin-top: 0.75rem;
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid $border;
+    font-size: 0.875rem;
+  }
+}
+
+.error-message {
+  color: #dc2626;
+}

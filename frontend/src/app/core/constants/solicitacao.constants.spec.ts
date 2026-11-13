@@ -5,9 +5,21 @@ import {
   STATUS_FLUXO,
   STATUS_OPCOES,
   formatarPrazo,
+  proximoStatus,
 } from './solicitacao.constants';
 
 describe('solicitacao.constants', () => {
+  it.each([
+    ['ABERTO', 'TRIAGEM'],
+    ['TRIAGEM', 'EM_EXECUCAO'],
+    ['EM_EXECUCAO', 'RESOLVIDO'],
+    ['RESOLVIDO', 'ENCERRADO'],
+    ['ENCERRADO', null],
+    ['INEXISTENTE', null],
+  ])('proximoStatus(%s) deve retornar %s', (atual, esperado) => {
+    expect(proximoStatus(atual)).toBe(esperado);
+  });
+
   it('STATUS_FLUXO deve seguir a ordem ABERTO → ENCERRADO', () => {
     expect(STATUS_FLUXO).toEqual(['ABERTO', 'TRIAGEM', 'EM_EXECUCAO', 'RESOLVIDO', 'ENCERRADO']);
     expect(STATUS_OPCOES).toHaveLength(5);

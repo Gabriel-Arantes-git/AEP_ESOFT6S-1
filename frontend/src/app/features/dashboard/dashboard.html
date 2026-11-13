@@ -1,0 +1,65 @@
+<div class="dashboard-page">
+  <header class="dashboard-header">
+    <h1 class="dashboard-header__title">Dashboard</h1>
+    <p class="dashboard-header__total">{{ total() }} solicitação(ões)</p>
+  </header>
+
+  @if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error()) {
+    <section class="dashboard-section">
+      <h2 class="dashboard-section__title">Por status</h2>
+      <div class="dashboard-grid">
+        @for (item of porStatus(); track item.valor) {
+          <div class="dashboard-card" data-grupo="status">
+            <span class="dashboard-card__valor">{{ item.total }}</span>
+            <span class="dashboard-card__label">{{ item.label }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2 class="dashboard-section__title">Por prioridade</h2>
+      <div class="dashboard-grid">
+        @for (item of porPrioridade(); track item.valor) {
+          <div class="dashboard-card" data-grupo="prioridade" [style.border-left-color]="corPrioridade[item.valor]">
+            <span class="dashboard-card__valor">{{ item.total }}</span>
+            <span class="dashboard-card__label">{{ item.label }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <h2 class="dashboard-section__title">SLA</h2>
+      <div class="dashboard-grid">
+        <div class="dashboard-card" data-grupo="sla">
+          <span class="dashboard-card__valor">{{ resumoSla().noPrazo }}</span>
+          <span class="dashboard-card__label">No prazo</span>
+        </div>
+        <div class="dashboard-card dashboard-card--alerta" data-grupo="sla">
+          <span class="dashboard-card__valor">{{ resumoSla().atrasadas }}</span>
+          <span class="dashboard-card__label">Atrasadas</span>
+        </div>
+        <div class="dashboard-card" data-grupo="sla">
+          <span class="dashboard-card__valor">{{ resumoSla().semPrazo }}</span>
+          <span class="dashboard-card__label">Sem prazo</span>
+        </div>
+      </div>
+
+      <ul class="dashboard-sla">
+        @for (sla of slas(); track sla.id) {
+          <li class="dashboard-sla__item">
+            <span>{{ prioridadeLabel[sla.prioridade] }}</span>
+            <span>{{ formatarPrazo(sla.prazoHoras) }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</div>
+
+<app-bottom-nav />

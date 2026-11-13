@@ -1,0 +1,68 @@
+$surface:    #ffffff;
+$bg:         #f8fafc;
+$text:       #1e293b;
+$text-muted: #64748b;
+$border:     #e2e8f0;
+
+.logs-page {
+  min-height: 100dvh;
+  padding: 1rem 1rem 5rem;
+  background: $bg;
+  color: $text;
+}
+
+.logs-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  &__title {
+    font-size: 1.25rem;
+  }
+
+  &__filtro {
+    padding: 0.5rem;
+    border: 1px solid $border;
+    border-radius: 8px;
+    font: inherit;
+  }
+}
+
+.logs-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.logs-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 12px;
+
+  &__acao {
+    font-weight: 600;
+  }
+
+  &__detalhes,
+  &__meta {
+    color: $text-muted;
+    font-size: 0.875rem;
+  }
+}
+
+.logs-vazio {
+  color: $text-muted;
+  font-size: 0.875rem;
+}
+
+.error-message {
+  color: #dc2626;
+}

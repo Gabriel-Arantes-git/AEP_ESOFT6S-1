@@ -1,0 +1,113 @@
+$primary:    #1a6b3c;
+$surface:    #ffffff;
+$bg:         #f8fafc;
+$text:       #1e293b;
+$text-muted: #64748b;
+$border:     #e2e8f0;
+
+.triagem-page {
+  min-height: 100dvh;
+  padding: 1rem 1rem 5rem;
+  background: $bg;
+  color: $text;
+}
+
+.triagem-header__title {
+  font-size: 1.25rem;
+  margin: 0 0 1rem;
+}
+
+.triagem-card,
+.triagem-item__btn {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 12px;
+}
+
+.triagem-card {
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  &__title {
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+  }
+
+  &__text {
+    color: $text-muted;
+    margin: 0 0 1rem;
+  }
+}
+
+.triagem-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  select,
+  textarea {
+    padding: 0.5rem;
+    border: 1px solid $border;
+    border-radius: 8px;
+    font: inherit;
+  }
+}
+
+.btn-mover {
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: $primary;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.triagem-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.triagem-item__btn {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.triagem-item__protocolo {
+  font-weight: 600;
+}
+
+.triagem-item__status,
+.triagem-item__categoria,
+.triagem-vazia {
+  color: $text-muted;
+  font-size: 0.875rem;
+}
+
+.error-message {
+  color: #dc2626;
+}
+
+.success-message {
+  color: $primary;
+}
