@@ -48,7 +48,7 @@ describe('TriagemComponent', () => {
         { provide: DepartamentoService, useValue: { listarAtivos } },
         {
           provide: AuthService,
-          useValue: { isGestor: () => gestor, isAuthenticated: () => true },
+          useValue: { isGestor: () => gestor, isAdmin: () => true, isAuthenticated: () => true },
         },
       ],
     });

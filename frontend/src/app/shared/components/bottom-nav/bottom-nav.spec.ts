@@ -6,7 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
 describe('BottomNavComponent', () => {
   const logout = vi.fn();
 
-  const montar = (opcoes: { logado: boolean; gestor: boolean }) => {
+  const montar = (opcoes: { logado: boolean; gestor: boolean; atendente?: boolean }) => {
     TestBed.configureTestingModule({
       imports: [BottomNavComponent],
       providers: [
@@ -16,6 +16,7 @@ describe('BottomNavComponent', () => {
           useValue: {
             isAuthenticated: () => opcoes.logado,
             isGestor: () => opcoes.gestor,
+            isAdmin: () => opcoes.gestor || !!opcoes.atendente,
             logout,
           },
         },
@@ -74,5 +75,22 @@ describe('BottomNavComponent', () => {
 
   it('link de logs não aparece para outros perfis', () => {
     expect(montar({ logado: true, gestor: false }).el.querySelector('a[href="/logs"]')).toBeNull();
+  });
+
+  it('link de triagem aparece para ATENDENTE', () => {
+    const { el } = montar({ logado: true, gestor: false, atendente: true });
+
+    expect(el.querySelector('a[href="/triagem"]')?.textContent).toContain('Triagem');
+    expect(el.querySelector('a[href="/dashboard"]')).toBeNull();
+  });
+
+  it('link de triagem aparece para GESTOR', () => {
+    expect(montar({ logado: true, gestor: true }).el.querySelector('a[href="/triagem"]')).not.toBeNull();
+  });
+
+  it('link de triagem não aparece para cidadão nem visitante', () => {
+    expect(montar({ logado: true, gestor: false }).el.querySelector('a[href="/triagem"]')).toBeNull();
+    TestBed.resetTestingModule();
+    expect(montar({ logado: false, gestor: false }).el.querySelector('a[href="/triagem"]')).toBeNull();
   });
 });

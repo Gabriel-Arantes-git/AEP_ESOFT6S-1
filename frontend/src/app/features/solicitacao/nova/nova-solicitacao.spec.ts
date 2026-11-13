@@ -19,7 +19,7 @@ describe('NovaSolicitacaoComponent', () => {
       imports: [NovaSolicitacaoComponent],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: { isAuthenticated: () => autenticado, isGestor: () => false, logout: vi.fn() } },
+        { provide: AuthService, useValue: { isAuthenticated: () => autenticado, isGestor: () => false, isAdmin: () => false, logout: vi.fn() } },
         { provide: CategoriaService, useValue: { listarAtivas } },
       ],
     });

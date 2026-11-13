@@ -30,7 +30,7 @@ describe('LogsComponent', () => {
         provideRouter([]),
         { provide: SolicitacaoService, useValue: { listar: listarSolicitacoes, logs: logsDaSolicitacao } },
         { provide: LogService, useValue: { listar: listarLogs } },
-        { provide: AuthService, useValue: { isGestor: () => true, isAuthenticated: () => true } },
+        { provide: AuthService, useValue: { isGestor: () => true, isAdmin: () => true, isAuthenticated: () => true } },
       ],
     });
     const fixture = TestBed.createComponent(LogsComponent);
