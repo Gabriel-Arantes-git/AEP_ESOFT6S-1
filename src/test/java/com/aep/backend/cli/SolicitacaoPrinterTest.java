@@ -5,7 +5,8 @@ import com.aep.backend.domain.departamento.entity.DepartamentoResumo;
 import com.aep.backend.domain.enums.PerfilUsuario;
 import com.aep.backend.domain.enums.StatusSolicitacao;
 import com.aep.backend.domain.log.entity.LogAcao;
-import com.aep.backend.domain.solicitacao.entity.Movimentacao;
+import com.aep.backend.domain.solicitacao.entity.Localizacao;
+import com.aep.backend.domain.solicitacao.entity.MovimentacaoResumo;
 import com.aep.backend.domain.solicitacao.entity.Solicitacao;
 import com.aep.backend.domain.usuario.entity.Usuario;
 import com.aep.backend.domain.usuario.entity.UsuarioResumo;
@@ -87,12 +88,9 @@ class SolicitacaoPrinterTest {
     @Test
     @DisplayName("Deve imprimir historico e justificativa de atraso quando presentes")
     void deveImprimirHistoricoEJustificativaDeAtrasoQuandoPresentes() {
-        Movimentacao movimentacao = new Movimentacao();
-        movimentacao.setStatusAnterior(StatusSolicitacao.TRIAGEM);
-        movimentacao.setStatusNovo(StatusSolicitacao.EM_EXECUCAO);
-        movimentacao.setComentario("Em execução");
-        movimentacao.setJustificativaAtraso("Aguardando peça");
-        movimentacao.setDataCadastro(LocalDateTime.now());
+        MovimentacaoResumo movimentacao = new MovimentacaoResumo(
+                "mov-1", StatusSolicitacao.TRIAGEM, StatusSolicitacao.EM_EXECUCAO,
+                "Em execução", null, "Aguardando peça", LocalDateTime.now());
 
         SolicitacaoPrinter.imprimirHistorico(List.of(movimentacao));
 
@@ -158,7 +156,7 @@ class SolicitacaoPrinterTest {
         solicitacao.setProtocolo("DEN-2026-00001");
         solicitacao.setStatus(StatusSolicitacao.ABERTO);
         solicitacao.setCategoria(new CategoriaResumo("cat-1", "Lixo Irregular"));
-        solicitacao.setBairro("Centro");
+        solicitacao.setLocalizacao(new Localizacao(null, "Centro", null, null, null, null));
         solicitacao.setDescricao("Descrição da denúncia");
         solicitacao.setDataCadastro(LocalDateTime.now());
         solicitacao.setUsuarioId("user-1");

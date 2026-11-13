@@ -13,7 +13,14 @@ describe('SolicitacaoService', () => {
   const nova: NovaSolicitacaoRequest = {
     categoriaId: 'cat-1',
     descricao: 'Lixo acumulado na calçada',
-    bairro: 'Centro',
+    localizacao: {
+      logradouro: 'Rua XV de Novembro',
+      bairro: 'Centro',
+      cep: '87013-230',
+      referencia: 'Em frente à praça',
+      latitude: -23.4205,
+      longitude: -51.9331,
+    },
     anonimo: false,
   };
 
