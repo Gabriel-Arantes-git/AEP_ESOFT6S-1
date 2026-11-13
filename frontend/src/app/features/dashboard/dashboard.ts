@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { SlaService } from '../../core/services/sla.service';
 import { SolicitacaoService } from '../../core/services/solicitacao.service';
@@ -11,7 +12,7 @@ import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-na
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [BottomNavComponent],
+  imports: [RouterLink, BottomNavComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })

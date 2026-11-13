@@ -1,0 +1,56 @@
+$primary:    #1a6b3c;
+$surface:    #ffffff;
+$bg:         #f8fafc;
+$text:       #1e293b;
+$text-muted: #64748b;
+$border:     #e2e8f0;
+$nav-h:      68px;
+$sidebar-w:  240px;
+$bp-desktop: 1024px;
+
+@mixin pagina {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: $bg;
+  color: $text;
+
+  @media (min-width: $bp-desktop) {
+    padding-left: $sidebar-w;
+  }
+}
+
+@mixin top-bar {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  &__logo { color: $primary; display: flex; align-items: center; text-decoration: none; flex: 1; }
+  &__title { font-size: 1rem; font-weight: 700; color: $text; flex: 2; text-align: center; }
+  &__spacer { flex: 1; }
+
+  @media (min-width: $bp-desktop) {
+    padding: 1rem 2rem;
+
+    &__title { font-size: 1.125rem; }
+  }
+}
+
+@mixin page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem 1rem calc(#{$nav-h} + 1rem);
+
+  @media (min-width: $bp-desktop) {
+    padding: 1.5rem 2rem 2rem;
+    gap: 1rem;
+    max-width: 1400px;
+  }
+}

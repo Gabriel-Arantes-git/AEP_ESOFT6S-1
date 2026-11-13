@@ -86,6 +86,14 @@ describe('MapaComponent', () => {
     listarPublicas.mockReturnValue(of([solicitacao('ABERTO'), solicitacao('TRIAGEM')]));
   });
 
+  it('deve exibir a barra superior com o título e o link para a home', async () => {
+    const { el } = await montar();
+
+    expect(el.querySelector('.top-bar__title')?.textContent?.trim()).toBe('Mapa de solicitações');
+    expect(el.querySelector('.top-bar__logo')?.getAttribute('href')).toBe('/home');
+    expect(el.querySelector('.page-content .mapa-container')).not.toBeNull();
+  });
+
   it('deve inicializar o mapa com a camada de tiles', async () => {
     const { el } = await montar();
 

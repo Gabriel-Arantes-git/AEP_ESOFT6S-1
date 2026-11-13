@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, computed, inject, signal, viewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SolicitacaoService } from '../../core/services/solicitacao.service';
 import { Solicitacao } from '../../core/models/solicitacao.model';
@@ -19,7 +20,7 @@ const ZOOM_PADRAO = 4;
 @Component({
   selector: 'app-mapa',
   standalone: true,
-  imports: [BottomNavComponent],
+  imports: [RouterLink, BottomNavComponent],
   templateUrl: './mapa.html',
   styleUrl: './mapa.scss'
 })

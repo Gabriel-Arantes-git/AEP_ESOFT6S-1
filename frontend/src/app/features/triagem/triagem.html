@@ -1,72 +1,80 @@
 <div class="triagem-page">
-  <header class="triagem-header">
-    <h1 class="triagem-header__title">Fila de triagem</h1>
+  <header class="top-bar">
+    <a routerLink="/home" class="top-bar__logo" aria-label="Página inicial">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </a>
+    <h1 class="top-bar__title">Fila de triagem</h1>
+    <div class="top-bar__spacer"></div>
   </header>
 
-  @if (sucesso()) {
-    <p class="success-message">{{ sucesso() }}</p>
-  }
-  @if (error()) {
-    <p class="error-message">{{ error() }}</p>
-  }
-
-  @if (selecionada(); as sel) {
-    <section class="triagem-card">
-      <h2 class="triagem-card__title">{{ sel.protocolo }} · {{ rotuloStatus(sel.status) }}</h2>
-      <p class="triagem-card__text">{{ sel.descricao }}</p>
-
-      @if (proximo(); as prox) {
-        <form [formGroup]="form" (ngSubmit)="mover()" class="triagem-form">
-          <div class="form-group">
-            <label for="prioridade">Prioridade</label>
-            <select id="prioridade" formControlName="prioridade">
-              <option value="">Selecione</option>
-              @for (p of prioridades; track p.valor) {
-                <option [value]="p.valor">{{ p.label }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="departamento">Departamento</label>
-            <select id="departamento" formControlName="departamentoId">
-              <option value="">Selecione</option>
-              @for (d of departamentos(); track d.id) {
-                <option [value]="d.id">{{ d.nome }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="comentario">Comentário</label>
-            <textarea id="comentario" formControlName="comentario" rows="3"></textarea>
-          </div>
-
-          @if (encerramentoBloqueado()) {
-            <p class="error-message">Apenas o gestor pode encerrar uma solicitação.</p>
-          }
-
-          <button type="submit" class="btn-mover" [disabled]="!podeMover()">
-            {{ loading() ? 'Salvando...' : 'Mover para ' + rotuloStatus(prox) }}
-          </button>
-        </form>
-      }
-    </section>
-  }
-
-  <ul class="triagem-lista">
-    @for (s of fila(); track s.id) {
-      <li class="triagem-item">
-        <button type="button" class="triagem-item__btn" (click)="selecionar(s)">
-          <span class="triagem-item__protocolo">{{ s.protocolo }}</span>
-          <span class="triagem-item__status">{{ rotuloStatus(s.status) }}</span>
-          <span class="triagem-item__categoria">{{ s.categoria.nome }}@if (s.localizacao?.bairro) { · {{ s.localizacao?.bairro }}}</span>
-        </button>
-      </li>
-    } @empty {
-      <li class="triagem-vazia">Nenhuma solicitação na fila.</li>
+  <div class="page-content">
+    @if (sucesso()) {
+      <p class="success-message">{{ sucesso() }}</p>
     }
-  </ul>
+    @if (error()) {
+      <p class="error-message">{{ error() }}</p>
+    }
+
+    @if (selecionada(); as sel) {
+      <section class="triagem-card">
+        <h2 class="triagem-card__title">{{ sel.protocolo }} · {{ rotuloStatus(sel.status) }}</h2>
+        <p class="triagem-card__text">{{ sel.descricao }}</p>
+
+        @if (proximo(); as prox) {
+          <form [formGroup]="form" (ngSubmit)="mover()" class="triagem-form">
+            <div class="form-group">
+              <label for="prioridade">Prioridade</label>
+              <select id="prioridade" formControlName="prioridade">
+                <option value="">Selecione</option>
+                @for (p of prioridades; track p.valor) {
+                  <option [value]="p.valor">{{ p.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="departamento">Departamento</label>
+              <select id="departamento" formControlName="departamentoId">
+                <option value="">Selecione</option>
+                @for (d of departamentos(); track d.id) {
+                  <option [value]="d.id">{{ d.nome }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="comentario">Comentário</label>
+              <textarea id="comentario" formControlName="comentario" rows="3"></textarea>
+            </div>
+
+            @if (encerramentoBloqueado()) {
+              <p class="error-message">Apenas o gestor pode encerrar uma solicitação.</p>
+            }
+
+            <button type="submit" class="btn-mover" [disabled]="!podeMover()">
+              {{ loading() ? 'Salvando...' : 'Mover para ' + rotuloStatus(prox) }}
+            </button>
+          </form>
+        }
+      </section>
+    }
+
+    <ul class="triagem-lista">
+      @for (s of fila(); track s.id) {
+        <li class="triagem-item">
+          <button type="button" class="triagem-item__btn" (click)="selecionar(s)">
+            <span class="triagem-item__protocolo">{{ s.protocolo }}</span>
+            <span class="triagem-item__status">{{ rotuloStatus(s.status) }}</span>
+            <span class="triagem-item__categoria">{{ s.categoria.nome }}@if (s.localizacao?.bairro) { · {{ s.localizacao?.bairro }}}</span>
+          </button>
+        </li>
+      } @empty {
+        <li class="triagem-vazia">Nenhuma solicitação na fila.</li>
+      }
+    </ul>
+  </div>
 </div>
 
 <app-bottom-nav />

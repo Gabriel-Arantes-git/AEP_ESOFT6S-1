@@ -1,20 +1,15 @@
-$primary:    #1a6b3c;
-$surface:    #ffffff;
-$bg:         #f8fafc;
-$text:       #1e293b;
-$text-muted: #64748b;
-$border:     #e2e8f0;
+@use '../../shared/styles/pagina' as *;
 
 .triagem-page {
-  min-height: 100dvh;
-  padding: 1rem 1rem 5rem;
-  background: $bg;
-  color: $text;
+  @include pagina;
 }
 
-.triagem-header__title {
-  font-size: 1.25rem;
-  margin: 0 0 1rem;
+.top-bar {
+  @include top-bar;
+}
+
+.page-content {
+  @include page-content;
 }
 
 .triagem-card,

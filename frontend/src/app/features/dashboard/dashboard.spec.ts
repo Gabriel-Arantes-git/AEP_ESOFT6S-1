@@ -69,6 +69,14 @@ describe('DashboardComponent', () => {
     ]));
   });
 
+  it('deve exibir a barra superior com o título e o link para a home', () => {
+    const { el } = montar();
+
+    expect(el.querySelector('.top-bar__title')?.textContent?.trim()).toBe('Dashboard');
+    expect(el.querySelector('.top-bar__logo')?.getAttribute('href')).toBe('/home');
+    expect(el.querySelector('.page-content .dashboard-section')).not.toBeNull();
+  });
+
   it('deve exibir o total de solicitações', () => {
     const { el } = montar();
 

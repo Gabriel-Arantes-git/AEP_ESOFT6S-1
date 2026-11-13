@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { LogService } from '../../core/services/log.service';
 import { SolicitacaoService } from '../../core/services/solicitacao.service';
 import { LogAcao } from '../../core/models/log.model';
@@ -8,7 +9,7 @@ import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-na
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [BottomNavComponent],
+  imports: [RouterLink, BottomNavComponent],
   templateUrl: './logs.html',
   styleUrl: './logs.scss'
 })

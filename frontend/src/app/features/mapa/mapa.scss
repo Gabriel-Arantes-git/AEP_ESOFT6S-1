@@ -1,41 +1,44 @@
-$primary:    #1a6b3c;
-$bg:         #f8fafc;
-$text:       #1e293b;
-$text-muted: #64748b;
-$border:     #e2e8f0;
+@use '../../shared/styles/pagina' as *;
 
 .mapa-page {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-height: 100dvh;
-  padding: 1rem 1rem 5rem;
-  background: $bg;
-  color: $text;
+  @include pagina;
+  height: 100dvh;
 }
 
-.mapa-header {
+.top-bar {
+  @include top-bar;
+}
+
+.page-content {
+  @include page-content;
+  min-height: 0;
+
+  @media (min-width: $bp-desktop) {
+    max-width: none;
+  }
+}
+
+.mapa-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
 
-  &__title {
-    font-size: 1.25rem;
-  }
-
   &__filtro {
     padding: 0.5rem;
     border: 1px solid $border;
     border-radius: 8px;
+    background: $surface;
     font: inherit;
   }
 }
 
 .mapa-container {
+  position: relative;
+  z-index: 0;
   flex: 1;
-  min-height: 60dvh;
+  min-height: 320px;
   border: 1px solid $border;
   border-radius: 12px;
 }

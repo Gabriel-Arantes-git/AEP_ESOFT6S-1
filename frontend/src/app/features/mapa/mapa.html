@@ -1,26 +1,36 @@
 <div class="mapa-page">
-  <header class="mapa-header">
-    <h1 class="mapa-header__title">Mapa de solicitações</h1>
-    <select
-      id="filtro-status"
-      class="mapa-header__filtro"
-      aria-label="Filtrar por status"
-      (change)="filtrarPorStatus($any($event.target).value)"
-    >
-      <option value="">Todos os status</option>
-      @for (s of statusOpcoes; track s.valor) {
-        <option [value]="s.valor">{{ s.label }}</option>
-      }
-    </select>
+  <header class="top-bar">
+    <a routerLink="/home" class="top-bar__logo" aria-label="Página inicial">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </a>
+    <h1 class="top-bar__title">Mapa de solicitações</h1>
+    <div class="top-bar__spacer"></div>
   </header>
 
-  @if (error()) {
-    <p class="error-message">{{ error() }}</p>
-  }
+  <div class="page-content">
+    <div class="mapa-toolbar">
+      <select
+        id="filtro-status"
+        class="mapa-toolbar__filtro"
+        aria-label="Filtrar por status"
+        (change)="filtrarPorStatus($any($event.target).value)"
+      >
+        <option value="">Todos os status</option>
+        @for (s of statusOpcoes; track s.valor) {
+          <option [value]="s.valor">{{ s.label }}</option>
+        }
+      </select>
+      <p class="mapa-total">{{ visiveis().length }} solicitação(ões) no mapa</p>
+    </div>
 
-  <div #mapa class="mapa-container"></div>
+    @if (error()) {
+      <p class="error-message">{{ error() }}</p>
+    }
 
-  <p class="mapa-total">{{ visiveis().length }} solicitação(ões) no mapa</p>
+    <div #mapa class="mapa-container"></div>
+  </div>
 </div>
 
 <app-bottom-nav />
