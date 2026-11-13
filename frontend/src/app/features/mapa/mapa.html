@@ -29,8 +29,126 @@
       <p class="error-message">{{ error() }}</p>
     }
 
-    <div #mapa class="mapa-container"></div>
+    <div class="map-area">
+      <div #mapa class="mapa-container"></div>
+
+      <div class="mapa-legenda">
+        <p class="mapa-legenda__titulo">Gravidade</p>
+        @for (f of filtrosGravidade; track f.prioridade) {
+          <div class="mapa-legenda__item">
+            <span class="mapa-legenda__cor" [style.background]="f.cor"></span>
+            <span class="mapa-legenda__label">{{ f.label }}</span>
+          </div>
+        }
+        @if (isAdmin) {
+          <div class="mapa-legenda__item">
+            <span class="mapa-legenda__cor" [style.background]="filtroSemDados.cor"></span>
+            <span class="mapa-legenda__label">{{ filtroSemDados.label }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="filtro-flutuante">
+        @if (filtroAberto()) {
+          <div class="filtro-painel">
+            <button
+              type="button"
+              class="filtro-chip"
+              [class.filtro-chip--ativo]="gravidadeFiltro() === null"
+              (click)="filtrarPorGravidade(null)">
+              Todas
+            </button>
+            @for (f of filtrosGravidade; track f.prioridade) {
+              <button
+                type="button"
+                class="filtro-chip"
+                [class.filtro-chip--ativo]="gravidadeFiltro() === f.prioridade"
+                [style.--chip-cor]="f.cor"
+                (click)="filtrarPorGravidade(f.prioridade)">
+                <span class="filtro-chip__dot"></span>
+                {{ f.label }}
+              </button>
+            }
+            @if (isAdmin) {
+              <button
+                type="button"
+                class="filtro-chip"
+                [class.filtro-chip--ativo]="gravidadeFiltro() === filtroSemDados.prioridade"
+                [style.--chip-cor]="filtroSemDados.cor"
+                (click)="filtrarPorGravidade(filtroSemDados.prioridade)">
+                <span class="filtro-chip__dot"></span>
+                {{ filtroSemDados.label }}
+              </button>
+            }
+          </div>
+        }
+        <button type="button" class="filtro-fab" [attr.aria-expanded]="filtroAberto()" (click)="toggleFiltro()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39A.998.998 0 0 0 18.95 4H5.04a1 1 0 0 0-.79 1.61z"/>
+          </svg>
+          <span>{{ gravidadeFiltro() ? 'Filtrado' : 'Filtrar' }}</span>
+        </button>
+      </div>
+    </div>
   </div>
+
+  @if (selecionada(); as sel) {
+    <div class="modal-overlay" (click)="fechar()">
+      <div class="modal" role="dialog" aria-modal="true" [attr.aria-label]="sel.protocolo" (click)="$event.stopPropagation()">
+        <div class="modal__handle"></div>
+
+        <div class="modal__cabecalho">
+          <div>
+            <p class="modal__categoria">{{ sel.categoria.nome }}</p>
+            <p class="modal__protocolo">{{ sel.protocolo }} · {{ rotuloStatus(sel.status) }}</p>
+          </div>
+          <button type="button" class="modal__fechar" aria-label="Fechar" (click)="fechar()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal__linha-topo">
+          <span class="modal__tempo">{{ tempoInfo(sel) }}</span>
+          <span
+            class="modal__gravidade"
+            [style.background]="corDe(sel.prioridade) + '22'"
+            [style.color]="corDe(sel.prioridade)">
+            {{ rotuloPrioridade(sel.prioridade) }}
+          </span>
+        </div>
+
+        @if (sel.prioridade) {
+          <div class="modal__secao">
+            <p class="modal__rotulo">Prazo</p>
+            <p class="modal__valor modal__valor--prazo">{{ prazoSla(sel.prioridade) }}</p>
+          </div>
+        }
+
+        <div class="modal__secao">
+          <p class="modal__rotulo">Localização</p>
+          <p class="modal__valor modal__valor--local">
+            {{ sel.localizacao?.logradouro || '—' }}
+            @if (sel.localizacao?.bairro) { · {{ sel.localizacao?.bairro }} }
+            @if (sel.localizacao?.cep) { · CEP {{ sel.localizacao?.cep }} }
+          </p>
+        </div>
+
+        <div class="modal__secao">
+          <p class="modal__rotulo">Descrição</p>
+          <p class="modal__valor">{{ sel.descricao }}</p>
+        </div>
+
+        @if (sel.localizacao?.referencia) {
+          <div class="modal__secao">
+            <p class="modal__rotulo">Ponto de referência</p>
+            <p class="modal__valor modal__valor--referencia">{{ sel.localizacao?.referencia }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>
 
 <app-bottom-nav />
