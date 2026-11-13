@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { DepartamentoService } from '../../core/services/departamento.service';
@@ -16,7 +17,7 @@ import { BottomNavComponent } from '../../shared/components/bottom-nav/bottom-na
 @Component({
   selector: 'app-triagem',
   standalone: true,
-  imports: [ReactiveFormsModule, BottomNavComponent],
+  imports: [ReactiveFormsModule, RouterLink, BottomNavComponent],
   templateUrl: './triagem.html',
   styleUrl: './triagem.scss'
 })

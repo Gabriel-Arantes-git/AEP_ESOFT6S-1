@@ -48,6 +48,14 @@ describe('LogsComponent', () => {
     listarLogs.mockReset().mockReturnValue(of([log('l1', 'CRIAR'), log('l2', 'LOGIN', { usuarioNome: null })]));
   });
 
+  it('deve exibir a barra superior com o título e o link para a home', () => {
+    const { el } = montar();
+
+    expect(el.querySelector('.top-bar__title')?.textContent?.trim()).toBe('Trilha de auditoria');
+    expect(el.querySelector('.top-bar__logo')?.getAttribute('href')).toBe('/home');
+    expect(el.querySelector('.page-content #filtro-solicitacao')).not.toBeNull();
+  });
+
   it('deve carregar todos os logs e as solicitações ao iniciar', () => {
     const { el } = montar();
 

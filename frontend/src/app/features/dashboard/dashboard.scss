@@ -1,32 +1,24 @@
-$primary:    #1a6b3c;
-$surface:    #ffffff;
-$bg:         #f8fafc;
-$text:       #1e293b;
-$text-muted: #64748b;
-$border:     #e2e8f0;
+@use '../../shared/styles/pagina' as *;
 
 .dashboard-page {
-  min-height: 100dvh;
-  padding: 1rem 1rem 5rem;
-  background: $bg;
-  color: $text;
+  @include pagina;
 }
 
-.dashboard-header {
-  margin-bottom: 1rem;
+.top-bar {
+  @include top-bar;
+}
 
-  &__title {
-    font-size: 1.25rem;
-  }
+.page-content {
+  @include page-content;
+}
 
-  &__total {
-    color: $text-muted;
-    font-size: 0.875rem;
-  }
+.dashboard-header__total {
+  color: $text-muted;
+  font-size: 0.875rem;
 }
 
 .dashboard-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 
   &__title {
     font-size: 1rem;

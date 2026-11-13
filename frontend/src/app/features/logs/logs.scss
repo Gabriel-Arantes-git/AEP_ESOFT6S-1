@@ -1,32 +1,26 @@
-$surface:    #ffffff;
-$bg:         #f8fafc;
-$text:       #1e293b;
-$text-muted: #64748b;
-$border:     #e2e8f0;
+@use '../../shared/styles/pagina' as *;
 
 .logs-page {
-  min-height: 100dvh;
-  padding: 1rem 1rem 5rem;
-  background: $bg;
-  color: $text;
+  @include pagina;
 }
 
-.logs-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+.top-bar {
+  @include top-bar;
+}
 
-  &__title {
-    font-size: 1.25rem;
-  }
+.page-content {
+  @include page-content;
+}
+
+.logs-toolbar {
+  display: flex;
+  justify-content: flex-end;
 
   &__filtro {
     padding: 0.5rem;
     border: 1px solid $border;
     border-radius: 8px;
+    background: $surface;
     font: inherit;
   }
 }
