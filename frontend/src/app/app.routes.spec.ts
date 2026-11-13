@@ -20,7 +20,10 @@ describe('rotas da aplicação', () => {
     expect(guards).toEqual([authGuard, gestorGuard]);
   });
 
-  it.each(['login', 'cadastro', 'home', 'mapa', 'solicitacao/nova', 'acompanhamento', 'triagem', 'dashboard', 'logs'])('/%s deve carregar o componente sob demanda', async path => {
+  it.each([
+    'login', 'cadastro', 'home', 'acompanhamento', 'solicitacao/nova', 'solicitacao/nova/localizacao',
+    'mapa', 'triagem', 'dashboard', 'logs'
+  ])('/%s deve carregar o componente sob demanda', async path => {
     const componente = await (rota(path).loadComponent as () => Promise<unknown>)();
 
     expect(componente).toBeTypeOf('function');
