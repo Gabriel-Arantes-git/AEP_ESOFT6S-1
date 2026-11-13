@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { gestorGuard } from './core/guards/gestor.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -23,6 +24,16 @@ export const routes: Routes = [
     path: 'triagem',
     canActivate: [authGuard],
     loadComponent: () => import('./features/triagem/triagem').then(m => m.TriagemComponent)
+  },
+  {
+    path: 'dashboard',
+    canActivate: [authGuard, gestorGuard],
+    loadComponent: () => import('./features/dashboard/dashboard').then(m => m.DashboardComponent)
+  },
+  {
+    path: 'logs',
+    canActivate: [authGuard, gestorGuard],
+    loadComponent: () => import('./features/logs/logs').then(m => m.LogsComponent)
   },
   { path: '**', redirectTo: 'login' }
 ];

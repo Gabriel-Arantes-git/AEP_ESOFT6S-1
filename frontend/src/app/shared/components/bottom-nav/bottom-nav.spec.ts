@@ -60,6 +60,14 @@ describe('BottomNavComponent', () => {
     expect(navegar).toHaveBeenCalledWith(['/login']);
   });
 
+  it('link de dashboard aparece para GESTOR', () => {
+    expect(montar({ logado: true, gestor: true }).el.querySelector('a[href="/dashboard"]')).not.toBeNull();
+  });
+
+  it('link de dashboard não aparece para outros perfis', () => {
+    expect(montar({ logado: true, gestor: false }).el.querySelector('a[href="/dashboard"]')).toBeNull();
+  });
+
   it('link de logs só aparece para GESTOR', () => {
     expect(montar({ logado: true, gestor: true }).el.querySelector('a[href="/logs"]')).not.toBeNull();
   });
