@@ -15,6 +15,8 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home').then(m => m.HomeComponent)
   },
   {
+    path: 'acompanhamento',
+    loadComponent: () => import('./features/solicitacao/listagem/listagem').then(m => m.ListagemComponent)
     path: 'solicitacao/nova',
     loadComponent: () => import('./features/solicitacao/nova/nova-solicitacao').then(m => m.NovaSolicitacaoComponent)
   },
