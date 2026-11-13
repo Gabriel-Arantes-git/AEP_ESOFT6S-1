@@ -14,6 +14,16 @@ export function marcadorSvg(): string {
   </svg>`;
 }
 
+export function iconePin(L: typeof import('leaflet'), cor: string): import('leaflet').DivIcon {
+  return L.divIcon({
+    html: pinSvg(cor),
+    className: '',
+    iconSize: [28, 36],
+    iconAnchor: [14, 36],
+    popupAnchor: [0, -34],
+  });
+}
+
 export function adicionarTileLayer(
   L: typeof import('leaflet'),
   map: import('leaflet').Map,
