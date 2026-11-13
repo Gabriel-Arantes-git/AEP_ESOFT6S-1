@@ -14,5 +14,9 @@ export const routes: Routes = [
     path: 'home',
     loadComponent: () => import('./features/home/home').then(m => m.HomeComponent)
   },
+  {
+    path: 'acompanhamento',
+    loadComponent: () => import('./features/solicitacao/listagem/listagem').then(m => m.ListagemComponent)
+  },
   { path: '**', redirectTo: 'login' }
 ];
