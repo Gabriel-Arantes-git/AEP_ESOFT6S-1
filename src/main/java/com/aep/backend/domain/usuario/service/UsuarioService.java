@@ -1,6 +1,7 @@
 package com.aep.backend.domain.usuario.service;
 
 import com.aep.backend.domain.abstraction.DefaultCrudService;
+import com.aep.backend.domain.enums.PerfilUsuario;
 import com.aep.backend.domain.usuario.dto.UsuarioRequest;
 import com.aep.backend.domain.usuario.entity.Usuario;
 import com.aep.backend.domain.usuario.repository.UsuarioRepository;
@@ -37,7 +38,7 @@ public class UsuarioService extends DefaultCrudService<UsuarioRepository, Usuari
         usuario.setCpf(request.cpf());
         usuario.setTelefone(request.telefone());
         usuario.setSenhaHash(passwordEncoder.encode(request.senha()));
-        usuario.setPerfil(request.perfil());
+        usuario.setPerfil(PerfilUsuario.CIDADAO);
         return salvar(usuario);
     }
 }
