@@ -30,9 +30,15 @@ A aplicação sobe em `http://localhost:4200`. Em desenvolvimento, as chamadas p
 | `/login` | Login | E-mail e senha; sucesso leva a `/home` |
 | `/cadastro` | Cadastro | Cria conta de cidadão (perfil `CIDADAO`) |
 | `/home` | Página inicial | Contadores e atalhos; funciona sem login |
+| `/solicitacao/nova` | Nova solicitação | Público (anônima se não logado) |
+| `/acompanhamento` | Listagem de solicitações | Público |
+| `/mapa` | Mapa | Público |
+| `/triagem` | Triagem | Exige login |
+| `/dashboard` | Painel | Exige login e perfil GESTOR |
+| `/logs` | Auditoria | Exige login e perfil GESTOR |
 | qualquer outra | — | Redireciona para `/login` |
 
-Os atalhos "Nova Solicitação", "Acompanhamento", "Mapa" e "Logs" apontam para telas das próximas entregas (`/solicitacao/nova`, `/acompanhamento`, `/mapa`, `/logs`). Até lá, clicar neles cai no redirecionamento para `/login`.
+Arquitetura completa: [`../docs/arquitetura.md`](../docs/arquitetura.md).
 
 ## Estrutura
 
